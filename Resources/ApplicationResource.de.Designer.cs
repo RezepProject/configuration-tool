@@ -67,5 +67,23 @@ namespace ConfigurationTool.Resources {
                 return ResourceManager.GetString("Greating", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sprache.
+        /// </summary>
+        internal static string Language {
+            get {
+                return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fragenverwaltung.
+        /// </summary>
+        internal static string QuestionsManagement {
+            get {
+                return ResourceManager.GetString("QuestionsManagement", resourceCulture);
+            }
+        }
     }
 }

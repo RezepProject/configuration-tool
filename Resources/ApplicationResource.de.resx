@@ -21,4 +21,10 @@
     <data name="Greating" xml:space="preserve">
         <value>Hallo und Willkommen bei Rezep</value>
     </data>
+    <data name="Language" xml:space="preserve">
+        <value>Sprache</value>
+    </data>
+    <data name="QuestionsManagement" xml:space="preserve">
+        <value>Fragenverwaltung</value>
+    </data>
 </root>
