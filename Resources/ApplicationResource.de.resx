@@ -27,4 +27,13 @@
     <data name="QuestionsManagement" xml:space="preserve">
         <value>Fragenverwaltung</value>
     </data>
+    <data name="Settings" xml:space="preserve">
+        <value>Einstellungen</value>
+    </data>
+    <data name="WelcomeMessageText" xml:space="preserve">
+        <value>Willkommen bei Rezep. Auf dieser Website können Sie Ihre Rezep-Einstellungen ändern oder Ihre Fragen verwalten.</value>
+    </data>
+    <data name="PepperSettings" xml:space="preserve">
+        <value>Peppereinstellungen</value>
+    </data>
 </root>

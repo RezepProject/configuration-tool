@@ -78,11 +78,38 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pepper settings.
+        /// </summary>
+        public static string PepperSettings {
+            get {
+                return ResourceManager.GetString("PepperSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Question Management.
         /// </summary>
         public static string QuestionsManagement {
             get {
                 return ResourceManager.GetString("QuestionsManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string Settings {
+            get {
+                return ResourceManager.GetString("Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome to Rezep. In on this website you can change your Rezep-Settings or manage your questions..
+        /// </summary>
+        public static string WelcomeMessageText {
+            get {
+                return ResourceManager.GetString("WelcomeMessageText", resourceCulture);
             }
         }
     }

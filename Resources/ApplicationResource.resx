@@ -126,4 +126,13 @@
   <data name="QuestionsManagement" xml:space="preserve">
     <value>Question Management</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="WelcomeMessageText" xml:space="preserve">
+    <value>Welcome to Rezep. In on this website you can change your Rezep-Settings or manage your questions.</value>
+  </data>
+  <data name="PepperSettings" xml:space="preserve">
+    <value>Pepper settings</value>
+  </data>
 </root>
