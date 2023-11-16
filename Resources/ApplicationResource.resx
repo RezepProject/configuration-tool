@@ -150,4 +150,7 @@
   <data name="ErrorTextInputQuestionManagment" xml:space="preserve">
     <value>Pleace enter at least 10 characters</value>
   </data>
+  <data name="SelectLanguage" xml:space="preserve">
+    <value>Choose a language</value>
+  </data>
 </root>

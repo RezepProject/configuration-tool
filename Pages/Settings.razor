@@ -6,21 +6,19 @@
 
 <MudText Typo="Typo.h3" GutterBottom="true">@_localizer["Settings"]</MudText>
 
-<!-- TODO: Use MudBlazor components for the select -->
-<strong>Sprache:</strong>
-<select class="form-control" @bind="Culture" style="width:300px; margin-left:10px; outline-color: black;">
-    @foreach (var culture in cultures)
-    {
-        <option value="@culture">@culture.DisplayName</option>
-    }
-</select>
+<MudSelect Label=@_localizer["SelectLanguage"] @bind-Value="Culture" Variant="Variant.Outlined" T="CultureInfo">
+    <MudSelectItem Value=@de>
+        <img src="https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg" height="14" class="mr-1" /> Deutsch
+    </MudSelectItem>
+    <MudSelectItem Value=@en>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Flag_of_the_United_Kingdom_%281-2%29.svg" height="14" class="mr-1" /> English
+    </MudSelectItem>
+</MudSelect>
+
 @code
 {
-    CultureInfo[] cultures = new[]
-    {
-        new CultureInfo("en"),
-        new CultureInfo("de")
-    };
+    CultureInfo en = new CultureInfo("en");
+    CultureInfo de = new CultureInfo("de");
 
     CultureInfo Culture
     {

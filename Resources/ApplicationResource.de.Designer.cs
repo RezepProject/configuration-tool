@@ -141,6 +141,15 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Wähle einen Sprache aus.
+        /// </summary>
+        internal static string SelectLanguage {
+            get {
+                return ResourceManager.GetString("SelectLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Einstellungen.
         /// </summary>
         internal static string Settings {

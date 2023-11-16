@@ -51,4 +51,7 @@
     <data name="ErrorTextInputQuestionManagment" xml:space="preserve">
         <value>Bitte geben Sie mindestens 10 Buchstaben ein</value>
     </data>
+    <data name="SelectLanguage" xml:space="preserve">
+        <value>Wähle einen Sprache aus</value>
+    </data>
 </root>
