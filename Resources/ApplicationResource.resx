@@ -135,4 +135,19 @@
   <data name="PepperSettings" xml:space="preserve">
     <value>Pepper settings</value>
   </data>
+  <data name="ErrorTextQuestion" xml:space="preserve">
+    <value>Please enter a question with a minimum of 10 characters</value>
+  </data>
+  <data name="ErrorTextAnswer" xml:space="preserve">
+    <value>Please enter a answer with a minimum of 10 characters</value>
+  </data>
+  <data name="Question" xml:space="preserve">
+    <value>Question</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>Answer</value>
+  </data>
+  <data name="ErrorTextInputQuestionManagment" xml:space="preserve">
+    <value>Pleace enter at least 10 characters</value>
+  </data>
 </root>

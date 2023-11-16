@@ -36,4 +36,19 @@
     <data name="PepperSettings" xml:space="preserve">
         <value>Peppereinstellungen</value>
     </data>
+    <data name="ErrorTextQuestion" xml:space="preserve">
+        <value>Bitte geben Sie einen Frage mit mindestens 10 Buchstaben ein</value>
+    </data>
+    <data name="ErrorTextAnswer" xml:space="preserve">
+        <value>Bitte geben Sie einen Antwort mit mindestens 10 Buchstaben ein</value>
+    </data>
+    <data name="Question" xml:space="preserve">
+        <value>Frage</value>
+    </data>
+    <data name="Answer" xml:space="preserve">
+        <value>Antwort</value>
+    </data>
+    <data name="ErrorTextInputQuestionManagment" xml:space="preserve">
+        <value>Bitte geben Sie mindestens 10 Buchstaben ein</value>
+    </data>
 </root>
