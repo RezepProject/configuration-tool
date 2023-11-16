@@ -6,6 +6,7 @@
 
 <MudText Typo="Typo.h3" GutterBottom="true">@_localizer["Settings"]</MudText>
 
+<!-- TODO: Use MudBlazor components for the select -->
 <strong>Sprache:</strong>
 <select class="form-control" @bind="Culture" style="width:300px; margin-left:10px; outline-color: black;">
     @foreach (var culture in cultures)
@@ -32,7 +33,6 @@
                 Thread.CurrentThread.CurrentUICulture = value;
                 CultureInfo.DefaultThreadCurrentCulture = value;
                 CultureInfo.DefaultThreadCurrentUICulture = value;
-                //Preferences.Set("language", value.Name);
             }
         }
     }
