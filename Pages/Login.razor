@@ -1,0 +1,20 @@
+﻿@page "/login"
+<h1>Login</h1>
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <MudForm @ref="form" @bind-IsValid="@success">
+                <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!" />
+                <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pw" RequiredError="Password is required!"/>
+                <div class="d-flex align-center justify-space-between">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Login</MudButton>
+                </div>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+@code {
+    bool success;
+    MudForm form;
+    MudTextField<string> pw;
+}
