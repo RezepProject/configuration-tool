@@ -153,4 +153,7 @@
   <data name="SelectLanguage" xml:space="preserve">
     <value>Choose a language</value>
   </data>
+  <data name="NotAuthorized" xml:space="preserve">
+    <value>You're not autherized</value>
+  </data>
 </root>

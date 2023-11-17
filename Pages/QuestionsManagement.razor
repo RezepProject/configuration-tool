@@ -1,13 +1,11 @@
 ﻿@page "/manage-questions"
-@using System.ComponentModel.DataAnnotations
+@attribute [Authorize]
+<!-- TODO: Add roles here like this attribute [Authorize(Roles = "Admin")] -->
 @inject IStringLocalizer<ApplicationResource> _localizer
-@using System.Text.RegularExpressions
-@using System.ComponentModel.DataAnnotations
 
 <PageTitle>@_localizer["QuestionsManagement"]</PageTitle>
-
 <MudText Typo="Typo.h3" GutterBottom="true">@_localizer["QuestionsManagement"]</MudText>
-
+<!-- // TODO: Continue here 26:30 https://www.youtube.com/watch?v=Yh16E2u2pio -->
 <MudGrid>
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
