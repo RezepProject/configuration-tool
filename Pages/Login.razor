@@ -1,20 +1,26 @@
 ﻿@page "/login"
-<h1>Login</h1>
+<PageTitle>Index</PageTitle>
 <MudGrid>
-    <MudItem xs="12" sm="7">
+    <MudItem xs="12" sm="7" gap-y-4>
+        <AuthorizeView>
+            <Authorized>
+                <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">You are already, logged in!</MudAlert>
+            </Authorized>
+        </AuthorizeView>
         <MudPaper Class="pa-4">
-            <MudForm @ref="form" @bind-IsValid="@success">
-                <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!" />
-                <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pw" RequiredError="Password is required!"/>
+            <MudForm @ref="_form" @bind-IsValid="@_success">
+                <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"/>
+                <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="_pw" RequiredError="Password is required!"/>
                 <div class="d-flex align-center justify-space-between">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Login</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto">Login</MudButton>
                 </div>
             </MudForm>
         </MudPaper>
     </MudItem>
 </MudGrid>
+
 @code {
-    bool success;
-    MudForm form;
-    MudTextField<string> pw;
+    bool _success;
+    MudForm _form;
+    MudTextField<string> _pw;
 }
