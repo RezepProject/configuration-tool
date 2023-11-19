@@ -1,14 +1,14 @@
 ﻿@page "/admin-page"
 @using System.ComponentModel.DataAnnotations
 
-<PageTitle>Index</PageTitle>
-
-<MudAlert Severity="Severity.Info">
-    Here you can add new members.
-    Please enter the mail address of the person you want to add. They will get a mail and log in.
-</MudAlert>
+<PageTitle>Admin Page</PageTitle>
+<MudText Typo="Typo.h3" GutterBottom="true">Admin Page</MudText>
 <MudGrid>
     <MudItem xs="12" sm="7">
+        <MudAlert Severity="Severity.Info">
+            Here you can add new members.
+            Please enter the mail address of the person you want to add. They will get a mail and log in.
+        </MudAlert>
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@success">
                 <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
