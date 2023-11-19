@@ -1,6 +1,37 @@
 ﻿@page "/settings"
+@using System.Globalization
 @inject HttpClient Http
 @inject IStringLocalizer<ApplicationResource> _localizer
 <PageTitle>@_localizer["Settings"]</PageTitle>
 
 <MudText Typo="Typo.h3" GutterBottom="true">@_localizer["Settings"]</MudText>
+
+<MudSelect Label=@_localizer["SelectLanguage"] @bind-Value="Culture" Variant="Variant.Outlined" T="CultureInfo">
+    <MudSelectItem Value=@de>
+        <img src="https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg" height="14" class="mr-1" /> Deutsch
+    </MudSelectItem>
+    <MudSelectItem Value=@en>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Flag_of_the_United_Kingdom_%281-2%29.svg" height="14" class="mr-1" /> English
+    </MudSelectItem>
+</MudSelect>
+
+@code
+{
+    CultureInfo en = new CultureInfo("en");
+    CultureInfo de = new CultureInfo("de");
+
+    CultureInfo Culture
+    {
+        get => CultureInfo.CurrentCulture;
+        set
+        {
+            if (CultureInfo.CurrentCulture != value)
+            {
+                Thread.CurrentThread.CurrentCulture = value;
+                Thread.CurrentThread.CurrentUICulture = value;
+                CultureInfo.DefaultThreadCurrentCulture = value;
+                CultureInfo.DefaultThreadCurrentUICulture = value;
+            }
+        }
+    }
+}

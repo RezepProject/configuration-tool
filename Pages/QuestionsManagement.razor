@@ -1,6 +1,45 @@
 ﻿@page "/manage-questions"
+@using System.ComponentModel.DataAnnotations
 @inject IStringLocalizer<ApplicationResource> _localizer
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+
 <PageTitle>@_localizer["QuestionsManagement"]</PageTitle>
 
 <MudText Typo="Typo.h3" GutterBottom="true">@_localizer["QuestionsManagement"]</MudText>
 
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <MudForm @ref="form" @bind-IsValid="@success">
+                <MudTextField T="string" Label=@_localizer["Question"] Required="true" @ref="questionInput"
+                              RequiredError=@_localizer["ErrorTextQuestion"]
+                              Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
+
+                <MudTextField T="string" Label=@_localizer["Answer"] Required="true" @ref="answerInput"
+                              RequiredError=@_localizer["ErrorTextAnswer"]
+                              Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
+
+            </MudForm>
+        </MudPaper>
+        <MudPaper Class="pa-4 mt-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(() => form.Validate())">Submit</MudButton>
+            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => form.Reset())">Reset</MudButton>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    bool success;
+    MudTextField<string> questionInput;
+    MudTextField<string> answerInput;
+    MudForm form;
+
+    private IEnumerable<string> LengthCheck(string input)
+    {
+        if (input.Length < 10 || string.IsNullOrWhiteSpace(input))
+            yield return @_localizer["ErrorTextInputQuestionManagment"];
+    }
+
+}

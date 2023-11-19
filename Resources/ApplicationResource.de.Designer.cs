@@ -60,6 +60,42 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Antwort.
+        /// </summary>
+        internal static string Answer {
+            get {
+                return ResourceManager.GetString("Answer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bitte geben Sie einen Antwort mit mindestens 10 Buchstaben ein.
+        /// </summary>
+        internal static string ErrorTextAnswer {
+            get {
+                return ResourceManager.GetString("ErrorTextAnswer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bitte geben Sie mindestens 10 Buchstaben ein.
+        /// </summary>
+        internal static string ErrorTextInputQuestionManagment {
+            get {
+                return ResourceManager.GetString("ErrorTextInputQuestionManagment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bitte geben Sie einen Frage mit mindestens 10 Buchstaben ein.
+        /// </summary>
+        internal static string ErrorTextQuestion {
+            get {
+                return ResourceManager.GetString("ErrorTextQuestion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hallo und Willkommen bei Rezep.
         /// </summary>
         internal static string Greating {
@@ -87,11 +123,29 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Frage.
+        /// </summary>
+        internal static string Question {
+            get {
+                return ResourceManager.GetString("Question", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fragenverwaltung.
         /// </summary>
         internal static string QuestionsManagement {
             get {
                 return ResourceManager.GetString("QuestionsManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wähle einen Sprache aus.
+        /// </summary>
+        internal static string SelectLanguage {
+            get {
+                return ResourceManager.GetString("SelectLanguage", resourceCulture);
             }
         }
         
