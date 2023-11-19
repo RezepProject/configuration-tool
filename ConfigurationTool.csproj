@@ -37,6 +37,10 @@
 	    <LastGenOutput>ApplicationResource.de.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>
+
+	<ItemGroup>
+		<_ContentIncludedByDefault Remove="wwwroot\sample-data\weather.json"/>
+	</ItemGroup>
 	
 	
 </Project>
