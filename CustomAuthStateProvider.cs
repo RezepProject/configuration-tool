@@ -9,8 +9,8 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         // TODO: Get token from backend
-        string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6InRlc3QiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiIyIiwiZXhwIjoxNzAwMjU1NDExLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyNjAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUyNjAifQ.MPEf5FTSYiC4Hs3Nxy22AgtoFhNLEUoGqVAM3byjJMM";
-
+        string token =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6InRlc3QiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiIyIiwiZXhwIjoxNzAwNDAxNTYyLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyNjAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUyNjAifQ.QfgwOimLhG8qVTJ-BXcZ1ZOUJPwT-ii8WOkDVPpOkn0";
         AuthenticationState state;
         var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
         // var identity = new ClaimsIdentity();
