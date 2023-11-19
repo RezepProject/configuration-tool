@@ -21,7 +21,15 @@
 
     CultureInfo Culture
     {
-        get => CultureInfo.CurrentCulture;
+        get
+        {
+            var currentCulture = CultureInfo.CurrentCulture;
+            if (currentCulture.Name.StartsWith("de"))
+            {
+                return _de;
+            }
+            return _en;
+        }
         set
         {
             if (!Equals(CultureInfo.CurrentCulture, value))
