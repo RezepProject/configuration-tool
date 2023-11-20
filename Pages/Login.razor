@@ -1,4 +1,6 @@
 ﻿@page "/login"
+@using ConfigurationTool.Model
+@using System.Net
 <PageTitle>Login</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">Login</MudText>
 <MudGrid>
@@ -9,7 +11,7 @@
             </Authorized>
         </AuthorizeView>
         <MudPaper Class="pa-4">
-            <MudForm @ref="_form" @bind-IsValid="@_success">
+            <MudForm Model="user" @ref="_form" @bind-IsValid="@_success" OnValidSubmit=@HandleLogin>
                 <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"/>
                 <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="_pw" RequiredError="Password is required!"/>
                 <div class="d-flex align-center justify-space-between">
@@ -21,7 +23,19 @@
 </MudGrid>
 
 @code {
+    UserLoginDto user = new UserLoginDto();
+
     bool _success;
     MudForm _form;
     MudTextField<string> _pw;
+
+    async Task HandleLogin()
+    {
+        var result = await WebRequestMethods.Http.PostAsJsonAsync("api/auth", user);
+        var token = await result.Content.ReadAsStringAsync();
+        Console.WriteLine(token);
+        await LocalStorage.SetItemAsync("token", token);
+        await AuthStateProvider.GetAuthenticationStateAsync();
+    }
+
 }
