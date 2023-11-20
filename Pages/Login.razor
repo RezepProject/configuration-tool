@@ -1,6 +1,9 @@
 ﻿@page "/login"
 @using ConfigurationTool.Model
-@using System.Net
+@using ConfigurationTool.Utils
+@using Blazored.LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
+
 <PageTitle>Login</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">Login</MudText>
 <MudGrid>
@@ -11,11 +14,11 @@
             </Authorized>
         </AuthorizeView>
         <MudPaper Class="pa-4">
-            <MudForm Model="user" @ref="_form" @bind-IsValid="@_success" OnValidSubmit=@HandleLogin>
-                <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"/>
-                <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="_pw" RequiredError="Password is required!"/>
+            <MudForm @bind-IsValid="@_success" OnValidSubmit="@HandleLogin" @ref="_form">
+                <MudTextField T="string" Label="Email" Required="true" @ref="_id" RequiredError="Email is required!"/>
+                <MudTextField T="string" Label="Password" Required="true" @ref="_pw" RequiredError="Password is required!"/>
                 <div class="d-flex align-center justify-space-between">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto">Login</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto" OnClick="HandleLogin">Login</MudButton>
                 </div>
             </MudForm>
         </MudPaper>
@@ -23,19 +26,28 @@
 </MudGrid>
 
 @code {
-    UserLoginDto user = new UserLoginDto();
-
     bool _success;
     MudForm _form;
     MudTextField<string> _pw;
+    MudTextField<string> _id;
 
     async Task HandleLogin()
     {
-        var result = await WebRequestMethods.Http.PostAsJsonAsync("api/auth", user);
-        var token = await result.Content.ReadAsStringAsync();
+        var user = new UserLoginDto
+        {
+            UserIdentificator = _id.Value,
+            Password = _pw.Value
+        };
+
+        string? token = await HttpUtils.Post<string>("authentication", user);
         Console.WriteLine(token);
-        await LocalStorage.SetItemAsync("token", token);
+
+        if (token == null)
+        {
+            // todo: handle
+        }
+        // @inject ILocalStorageService LocalStorage
+        // await LocalStorage.SetItemAsync("token", token);
         await AuthStateProvider.GetAuthenticationStateAsync();
     }
-
 }

@@ -10,7 +10,7 @@
         <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Dark Mode"/>
         <AuthorizeView>
             <Authorized>
-                <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Href="/">Logout</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Href="/login">Logout</MudButton>
             </Authorized>
             <NotAuthorized>
                 @if (!NavManager.Uri.EndsWith("/login"))

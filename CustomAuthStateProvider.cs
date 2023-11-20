@@ -9,7 +9,8 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
 {
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        // TODO: Get token from backend
+        // TODO: use user from local storage
+        // TODO: check if token is valid
         string? token = await HttpUtils.Post<string>("authentication", new  { UserIdentificator = "test", Password = "test" });
 
         if (token == null)
