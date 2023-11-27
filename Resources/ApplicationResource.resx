@@ -153,4 +153,10 @@
   <data name="SelectLanguage" xml:space="preserve">
     <value>Choose a language</value>
   </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
 </root>

@@ -23,8 +23,8 @@
             </MudForm>
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(() => form.Validate())">Submit</MudButton>
-            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => form.Reset())">Reset</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(() => form.Validate())">@_localizer["Submit"]</MudButton>
+            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => form.Reset())">@_localizer["Reset"]</MudButton>
         </MudPaper>
     </MudItem>
 </MudGrid>

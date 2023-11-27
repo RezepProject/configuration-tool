@@ -54,4 +54,10 @@
     <data name="SelectLanguage" xml:space="preserve">
         <value>Wähle einen Sprache aus</value>
     </data>
+    <data name="Submit" xml:space="preserve">
+        <value>Einreichen</value>
+    </data>
+    <data name="Reset" xml:space="preserve">
+        <value>Zurücksetzen</value>
+    </data>
 </root>
