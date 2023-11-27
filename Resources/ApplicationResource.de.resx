@@ -59,5 +59,7 @@
     </data>
     <data name="Reset" xml:space="preserve">
         <value>Zurücksetzen</value>
+    <data name="NotAuthorized" xml:space="preserve">
+        <value>Du bist nicht autoriesiert</value>
     </data>
 </root>

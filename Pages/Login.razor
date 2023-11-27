@@ -1,0 +1,53 @@
+﻿@page "/login"
+@using ConfigurationTool.Model
+@using ConfigurationTool.Utils
+@using Blazored.LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Login</PageTitle>
+<MudText Typo="Typo.h3" GutterBottom="true">Login</MudText>
+<MudGrid>
+    <MudItem xs="12" sm="7" gap-y-4>
+        <AuthorizeView>
+            <Authorized>
+                <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">You are already, logged in!</MudAlert>
+            </Authorized>
+        </AuthorizeView>
+        <MudPaper Class="pa-4">
+            <MudForm @bind-IsValid="@_success" OnValidSubmit="@HandleLogin" @ref="_form">
+                <MudTextField T="string" Label="Email" Required="true" @ref="_id" RequiredError="Email is required!"/>
+                <MudTextField T="string" Label="Password" Required="true" @ref="_pw" RequiredError="Password is required!"/>
+                <div class="d-flex align-center justify-space-between">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto" OnClick="HandleLogin">Login</MudButton>
+                </div>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    bool _success;
+    MudForm _form;
+    MudTextField<string> _pw;
+    MudTextField<string> _id;
+
+    async Task HandleLogin()
+    {
+        var user = new UserLoginDto
+        {
+            UserIdentificator = _id.Value,
+            Password = _pw.Value
+        };
+
+        string? token = await HttpUtils.Post<string>("authentication", user);
+        Console.WriteLine(token);
+
+        if (token == null)
+        {
+            // todo: handle
+        }
+        // @inject ILocalStorageService LocalStorage
+        // await LocalStorage.SetItemAsync("token", token);
+        await AuthStateProvider.GetAuthenticationStateAsync();
+    }
+}

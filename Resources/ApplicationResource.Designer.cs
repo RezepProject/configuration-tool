@@ -114,6 +114,15 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You&apos;re not autherized.
+        /// </summary>
+        public static string NotAuthorized {
+            get {
+                return ResourceManager.GetString("NotAuthorized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pepper settings.
         /// </summary>
         public static string PepperSettings {
