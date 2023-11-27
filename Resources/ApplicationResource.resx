@@ -158,6 +158,7 @@
   </data>
   <data name="Reset" xml:space="preserve">
     <value>Reset</value>
+  </data>
   <data name="NotAuthorized" xml:space="preserve">
     <value>You're not autherized</value>
   </data>
