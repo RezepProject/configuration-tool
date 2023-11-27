@@ -1,5 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@using Blazored.LocalStorage
+@inherits LayoutComponentBase
 @inject NavigationManager NavManager
+@inject ILocalStorageService _localstorage;
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 <MudLayout>
@@ -10,7 +12,7 @@
         <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Dark Mode"/>
         <AuthorizeView>
             <Authorized>
-                <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Href="/login">Logout</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Href="/login" OnClick="LogOut">Logout</MudButton>
             </Authorized>
             <NotAuthorized>
                 @if (!NavManager.Uri.EndsWith("/login"))
@@ -42,6 +44,20 @@
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    void LogOut()
+    {
+        _localstorage.RemoveItemAsync("token");
+        NavManager.NavigateTo("/login");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(await _localstorage.GetItemAsync<string>("token")))
+        {
+            NavManager.NavigateTo("/login");
+        }
     }
 
 }

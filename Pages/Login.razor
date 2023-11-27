@@ -3,6 +3,8 @@
 @using ConfigurationTool.Utils
 @using Blazored.LocalStorage
 @inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService Localstorage;
+@inject NavigationManager Navigation;
 
 <PageTitle>Login</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">Login</MudText>
@@ -14,7 +16,7 @@
             </Authorized>
         </AuthorizeView>
         <MudPaper Class="pa-4">
-            <MudForm @bind-IsValid="@_success" OnValidSubmit="@HandleLogin" @ref="_form">
+            <MudForm @bind-IsValid="@_success" @ref="_form">
                 <MudTextField T="string" Label="Email" Required="true" @ref="_id" RequiredError="Email is required!"/>
                 <MudTextField T="string" Label="Password" Required="true" @ref="_pw" RequiredError="Password is required!"/>
                 <div class="d-flex align-center justify-space-between">
@@ -39,15 +41,17 @@
             Password = _pw.Value
         };
 
-        string? token = await HttpUtils.Post<string>("authentication", user);
-        Console.WriteLine(token);
+        var token = await HttpUtils.Post<string>("authentication", user);
 
-        if (token == null)
+        if (string.IsNullOrEmpty(token))
         {
-            // todo: handle
+            _success = false;
+            StateHasChanged();
+            return;
         }
-        // @inject ILocalStorageService LocalStorage
-        // await LocalStorage.SetItemAsync("token", token);
+
+        await Localstorage.SetItemAsync("token", token);
         await AuthStateProvider.GetAuthenticationStateAsync();
+        Navigation.NavigateTo("/");
     }
 }

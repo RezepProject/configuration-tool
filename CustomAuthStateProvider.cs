@@ -1,28 +1,30 @@
 ﻿using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
+using Blazored.LocalStorage;
 using ConfigurationTool.Utils;
 
 namespace ConfigurationTool;
 
 public class CustomAuthStateProvider : AuthenticationStateProvider
 {
+    private readonly ILocalStorageService _localStorageService;
+
+    public CustomAuthStateProvider(ILocalStorageService localStorageService)
+    {
+        _localStorageService = localStorageService;
+    }
+
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        // TODO: use user from local storage
-        // TODO: check if token is valid
-        string? token = await HttpUtils.Post<string>("authentication", new  { UserIdentificator = "test", Password = "test" });
+        string token = await _localStorageService.GetItemAsync<string>("token");
 
-        if (token == null)
+        if (string.IsNullOrEmpty(token))
         {
-            // TODO: handle
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
 
-        AuthenticationState state;
         var identity = new ClaimsIdentity(AuthenticationUtils.ParseClaimsFromJwt(token), "jwt");
-        // var identity = new ClaimsIdentity();
         var user = new ClaimsPrincipal(identity);
-        state = new AuthenticationState(user);
+        var state = new AuthenticationState(user);
 
         NotifyAuthenticationStateChanged(Task.FromResult(state));
 
