@@ -75,4 +75,16 @@
     <data name="AdminPage" xml:space="preserve">
         <value>Admin Seite</value>
     </data>
+    <data name="AlreadyLoggedIn" xml:space="preserve">
+        <value>Du bist bereits eingeloggt!</value>
+    </data>
+    <data name="EmailRequired" xml:space="preserve">
+        <value>Du musst eine Email eingeben!</value>
+    </data>
+    <data name="PasswordRequired" xml:space="preserve">
+        <value>Du musst ein Passwort eingeben!</value>
+    </data>
+    <data name="Password" xml:space="preserve">
+        <value>Passwort</value>
+    </data>
 </root>
