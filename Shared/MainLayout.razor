@@ -68,13 +68,13 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (!string.IsNullOrEmpty(await _localstorage.GetItemAsync<string>("darkModeState")))
+        {
+            _isDarkMode = Convert.ToBoolean(await _localstorage.GetItemAsync<string>("darkModeState"));
+        }
         if (string.IsNullOrEmpty(await _localstorage.GetItemAsync<string>("token")))
         {
             NavManager.NavigateTo("/login");
-        }
-        if (string.IsNullOrEmpty(await _localstorage.GetItemAsync<string>("darkModeState")))
-        {
-            _isDarkMode = Convert.ToBoolean(await _localstorage.GetItemAsync<string>("darkModeState"));
         }
     }
 
