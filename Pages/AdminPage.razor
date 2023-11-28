@@ -1,0 +1,28 @@
+﻿@page "/admin-page"
+@using System.ComponentModel.DataAnnotations
+@inject IStringLocalizer<ApplicationResource> _localizer
+
+<PageTitle>Admin Page</PageTitle>
+<MudText Typo="Typo.h3" GutterBottom="true">@_localizer["AdminPage"]</MudText>
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudAlert Severity="Severity.Info">@_localizer["AddNewMembers"]</MudAlert>
+        <MudPaper Class="pa-4">
+            <MudForm @ref="form" @bind-IsValid="@success">
+                <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
+                              Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
+                <div class="d-flex align-center justify-space-between">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">@_localizer["RegisterUser"]</MudButton>
+                </div>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+<!--TODO: Add list of users -->
+
+@code {
+    bool success;
+    MudForm form;
+
+}

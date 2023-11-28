@@ -54,4 +54,37 @@
     <data name="SelectLanguage" xml:space="preserve">
         <value>Wähle einen Sprache aus</value>
     </data>
+    <data name="Submit" xml:space="preserve">
+        <value>Einreichen</value>
+    </data>
+    <data name="Reset" xml:space="preserve">
+        <value>Zurücksetzen</value>
+    </data>
+    <data name="NotAuthorized" xml:space="preserve">
+        <value>Du hast nicht die nötige berechtigung um auf diese Seite zu zugreifen.</value>
+    </data>
+    <data name="LoginButton" xml:space="preserve">
+        <value>Einloggen</value>
+    </data>
+    <data name="AddNewMembers" xml:space="preserve">
+        <value>Hier kannst du neue Benutzer hinzufügen. Bitte füge die mail adresse, der person die die du hinzufügen möchtest unten ein.</value>
+    </data>
+    <data name="RegisterUser" xml:space="preserve">
+        <value>Benutzer regestrieren</value>
+    </data>
+    <data name="AdminPage" xml:space="preserve">
+        <value>Admin Seite</value>
+    </data>
+    <data name="AlreadyLoggedIn" xml:space="preserve">
+        <value>Du bist bereits eingeloggt!</value>
+    </data>
+    <data name="EmailRequired" xml:space="preserve">
+        <value>Du musst eine Email eingeben!</value>
+    </data>
+    <data name="PasswordRequired" xml:space="preserve">
+        <value>Du musst ein Passwort eingeben!</value>
+    </data>
+    <data name="Password" xml:space="preserve">
+        <value>Passwort</value>
+    </data>
 </root>
