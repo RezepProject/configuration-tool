@@ -8,7 +8,7 @@
 <MudLayout>
     <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme"/>
     <MudAppBar Elevation="0">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle"/>
         <MudSpacer/>
         <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Dark Mode"/>
         <AuthorizeView>
@@ -36,15 +36,28 @@
     </MudMainContent>
 </MudLayout>
 
-
 @code {
     bool _drawerOpen = true;
     private MudTheme _theme = new();
-    private bool _isDarkMode;
-
+    private bool idm;
+    private bool _isDarkMode
+    {
+        get => idm;
+        set
+        {
+            idm = value;
+            ToggleDarkMode();
+        }
+    }
+    
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    async void ToggleDarkMode()
+    {
+        await _localstorage.SetItemAsync("darkModeState", _isDarkMode);
     }
 
     void LogOut()
@@ -58,6 +71,10 @@
         if (string.IsNullOrEmpty(await _localstorage.GetItemAsync<string>("token")))
         {
             NavManager.NavigateTo("/login");
+        }
+        if (string.IsNullOrEmpty(await _localstorage.GetItemAsync<string>("darkModeState")))
+        {
+            _isDarkMode = Convert.ToBoolean(await _localstorage.GetItemAsync<string>("darkModeState"));
         }
     }
 
