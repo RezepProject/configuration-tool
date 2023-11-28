@@ -160,6 +160,18 @@
     <value>Reset</value>
   </data>
   <data name="NotAuthorized" xml:space="preserve">
-    <value>You're not autherized</value>
+    <value>Sorry, you're not authorized to access this page.</value>
+  </data>
+  <data name="LoginButton" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="AddNewMembers" xml:space="preserve">
+    <value>Here you can add new members. Please enter the mail address of the person you want to add. They will get a mail and log in.</value>
+  </data>
+  <data name="RegisterUser" xml:space="preserve">
+    <value>Register User</value>
+  </data>
+  <data name="AdminPage" xml:space="preserve">
+    <value>Admin Page</value>
   </data>
 </root>

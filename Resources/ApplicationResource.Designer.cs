@@ -60,6 +60,24 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Here you can add new members. Please enter the mail address of the person you want to add. They will get a mail and log in..
+        /// </summary>
+        public static string AddNewMembers {
+            get {
+                return ResourceManager.GetString("AddNewMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Admin Page.
+        /// </summary>
+        public static string AdminPage {
+            get {
+                return ResourceManager.GetString("AdminPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Answer.
         /// </summary>
         public static string Answer {
@@ -114,7 +132,16 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You&apos;re not autherized.
+        ///   Looks up a localized string similar to Login.
+        /// </summary>
+        public static string LoginButton {
+            get {
+                return ResourceManager.GetString("LoginButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorry, you&apos;re not authorized to access this page..
         /// </summary>
         public static string NotAuthorized {
             get {
@@ -146,6 +173,15 @@ namespace ConfigurationTool.Resources {
         public static string QuestionsManagement {
             get {
                 return ResourceManager.GetString("QuestionsManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Register User.
+        /// </summary>
+        public static string RegisterUser {
+            get {
+                return ResourceManager.GetString("RegisterUser", resourceCulture);
             }
         }
         

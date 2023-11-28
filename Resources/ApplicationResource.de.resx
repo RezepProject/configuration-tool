@@ -61,6 +61,18 @@
         <value>Zurücksetzen</value>
     </data>
     <data name="NotAuthorized" xml:space="preserve">
-        <value>Du bist nicht autoriesiert</value>
+        <value>Du hast nicht die nötige berechtigung um auf diese Seite zu zugreifen.</value>
+    </data>
+    <data name="LoginButton" xml:space="preserve">
+        <value>Einloggen</value>
+    </data>
+    <data name="AddNewMembers" xml:space="preserve">
+        <value>Hier kannst du neue Benutzer hinzufügen. Bitte füge die mail adresse, der person die die du hinzufügen möchtest unten ein.</value>
+    </data>
+    <data name="RegisterUser" xml:space="preserve">
+        <value>Benutzer regestrieren</value>
+    </data>
+    <data name="AdminPage" xml:space="preserve">
+        <value>Admin Seite</value>
     </data>
 </root>
