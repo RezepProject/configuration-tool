@@ -1,6 +1,12 @@
 ﻿@page "/admin-page"
 @using System.ComponentModel.DataAnnotations
+@using System.Net
+@using Blazored.LocalStorage
+@using ConfigurationTool.Model
+@using ConfigurationTool.Utils
 @inject IStringLocalizer<ApplicationResource> _localizer
+@inject ILocalStorageService Localstorage;
+@inject NavigationManager NavigationManager;
 
 <PageTitle>Admin Page</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">@_localizer["AdminPage"]</MudText>
@@ -10,9 +16,22 @@
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@success">
                 <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
-                              Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
+                              Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })" @ref="email"/>
+                <MudSelect T="string" Label="Role" AnchorOrigin="Origin.BottomCenter" Required="true" @ref="role">
+                    @if(roles.Count == 0)
+                    {
+                        <MudSelectItem Value="@("No roles available")"/>
+                    }
+                    else
+                    {
+                        foreach (var r in roles)
+                        {
+                            <MudSelectItem Value="@(r.Name)"/>
+                        }
+                    }
+                </MudSelect>
                 <div class="d-flex align-center justify-space-between">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">@_localizer["RegisterUser"]</MudButton>
+                    <MudButton OnClick="@RegisterUser" Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">@_localizer["RegisterUser"]</MudButton>
                 </div>
             </MudForm>
         </MudPaper>
@@ -24,5 +43,44 @@
 @code {
     bool success;
     MudForm form;
+    List<Role> roles = new List<Role>();
+    MudTextField<string> email;
+    MudSelect<string> role;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await HttpUtils.Get<List<Role>>("role", await CheckJwt());
+        if (res == null)
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+        roles = res;
+    }
+
+    async Task<string> CheckJwt()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+        if (token != null) return token;
+        NavigationManager.NavigateTo("/login");
+        return "";
+    }
+
+    private async Task RegisterUser()
+    {
+        var user = new CreateUser()
+        {
+            Email = email.Value,
+            RoleId = roles.FirstOrDefault(r => r.Name == role.Value)!.Id
+        };
+        var res = await HttpUtils.Post<object>("configuser", user, await CheckJwt());
+        Console.WriteLine(res);
+        if (res is string s && s.Contains("Unauthorized"))
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
+        form.Reset();
+    }
 }
