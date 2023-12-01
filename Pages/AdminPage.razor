@@ -1,5 +1,9 @@
 ﻿@page "/admin-page"
+@using backend.Entities
+@using Blazored.LocalStorage
+@using ConfigurationTool.Utils
 @using System.ComponentModel.DataAnnotations
+@inject ILocalStorageService Localstorage;
 
 <PageTitle>Admin Page</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">Admin Page</MudText>
@@ -13,6 +17,12 @@
             <MudForm @ref="form" @bind-IsValid="@success">
                 <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
                               Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
+                <MudSelect Dense="true" T="string" Label="Role" Variant="Variant.Text">
+                    @foreach (Role role in _roles)
+                    {
+                        <MudSelectItem Value=@role>@role.Name</MudSelectItem>
+                    }
+                </MudSelect>
                 <div class="d-flex align-center justify-space-between">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Register user</MudButton>
                 </div>
@@ -26,5 +36,11 @@
 @code {
     bool success;
     MudForm form;
+    List<Role>? _roles = new List<Role>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _roles = await HttpUtils.Get<List<Role>>("role", await Localstorage.GetItemAsync<string>("token"));
+    }
 
 }
