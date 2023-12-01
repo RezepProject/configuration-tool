@@ -1,6 +1,5 @@
 ﻿@page "/admin-page"
 @using System.ComponentModel.DataAnnotations
-@using System.Net
 @using Blazored.LocalStorage
 @using ConfigurationTool.Model
 @using ConfigurationTool.Utils
@@ -15,10 +14,11 @@
         <MudAlert Severity="Severity.Info">@_localizer["AddNewMembers"]</MudAlert>
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@success">
+                <h2>Invite new user</h2>
                 <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
                               Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })" @ref="email"/>
                 <MudSelect T="string" Label="Role" AnchorOrigin="Origin.BottomCenter" Required="true" @ref="role">
-                    @if(roles.Count == 0)
+                    @if (roles.Count == 0)
                     {
                         <MudSelectItem Value="@("No roles available")"/>
                     }
@@ -30,10 +30,66 @@
                         }
                     }
                 </MudSelect>
-                <div class="d-flex align-center justify-space-between">
+                <div class="d-flex align-center justify-space-between" style="margin-top: 2em;">
                     <MudButton OnClick="@RegisterUser" Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">@_localizer["RegisterUser"]</MudButton>
                 </div>
             </MudForm>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="7">
+        <MudAlert Severity="Severity.Info">Here you can manage current invitations.</MudAlert>
+        <MudPaper Class="pa-4">
+            <h2 style="margin-bottom: 1em;">Manage current invitations</h2>
+            <MudTable Items="new List<string>()">
+                <HeaderContent>
+                    <MudTh>@_localizer["Email"]</MudTh>
+                    <MudTh>@_localizer["Role"]</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    @foreach (var invite in invitations)
+                    {
+                        <MudTr>
+                            <MudTd>@invite.Email</MudTd>
+                            <MudTd>@roles.Find(r => r.Id == invite.RoleId)?.Name</MudTd>
+                        </MudTr>
+                    }
+                    <MudTd>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary">@_localizer["Resend"]</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Secondary">@_localizer["Delete"]</MudButton>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="7">
+        <MudAlert Severity="Severity.Info">Here you can manage current users.</MudAlert>
+        <MudPaper Class="pa-4">
+            <h2 style="margin-bottom: 1em;">Manage current users</h2>
+            <MudTable Items="new List<string>()">
+                <HeaderContent>
+                    <MudTh>@_localizer["Email"]</MudTh>
+                    <MudTh>@_localizer["Role"]</MudTh>
+                    <MudTh>@_localizer["FirstName"]</MudTh>
+                    <MudTh>@_localizer["LastName"]</MudTh>
+                    <MudTh>@_localizer["Actions"]</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    @foreach (var user in users)
+                    {
+                        <MudTr>
+                            <MudTd>@user.Email</MudTd>
+                            <MudTd>@roles.Find(r => r.Id == user.RoleId)?.Name</MudTd>
+                            <MudTd>@user.FirstName</MudTd>
+                            <MudTd>@user.LastName</MudTd>
+                            <MudTd>todo: actions</MudTd>
+                        </MudTr>
+                    }
+                    <MudTd>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary">@_localizer["Resend"]</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Secondary">@_localizer["Delete"]</MudButton>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
         </MudPaper>
     </MudItem>
 </MudGrid>
@@ -44,18 +100,40 @@
     bool success;
     MudForm form;
     List<Role> roles = new List<Role>();
+    List<User> users = new List<User>();
+    List<CreateUser> invitations = new List<CreateUser>();
     MudTextField<string> email;
     MudSelect<string> role;
 
     protected override async Task OnInitializedAsync()
     {
-        var res = await HttpUtils.Get<List<Role>>("role", await CheckJwt());
-        if (res == null)
+        var roleRes = await HttpUtils.Get<List<Role>>("role", await CheckJwt());
+        if (roleRes == null)
         {
             NavigationManager.NavigateTo("/login");
             return;
         }
-        roles = res;
+        roles = roleRes;
+
+        var invitationRes = await HttpUtils.Get<List<CreateUser>>("configuser/invitation", await CheckJwt());
+        if (invitationRes == null)
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+        invitations = invitationRes;
+
+        var userRes = await HttpUtils.Get<List<User>>("configuser", await CheckJwt());
+        if (userRes == null)
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+        users = userRes;
+
+        Console.WriteLine(roles.Count);
+        Console.WriteLine(users.Count);
+        Console.WriteLine(invitations.Count);
     }
 
     async Task<string> CheckJwt()
