@@ -1,17 +1,14 @@
-﻿@page "/register"
+﻿@page "/register/{Token:guid}"
 @using System.Text.RegularExpressions
-@using System.ComponentModel.DataAnnotations
 
-<PageTitle>Login</PageTitle>
-<MudText Typo="Typo.h3" GutterBottom="true">Register</MudText>
+<PageTitle>Register</PageTitle>
+<MudText Typo="Typo.h3" GutterBottom="true">Register: @Token</MudText>
 <MudGrid>
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@success">
                 <MudTextField T="string" Label="First name" Required="true" RequiredError="Your first name is required!"/>
                 <MudTextField T="string" Label="Last name" Required="true" RequiredError="Your last name is required!"/>
-                <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
-                              Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
                 <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pwField1"
                               InputType="InputType.Password"
                               Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
@@ -29,6 +26,10 @@
 </MudGrid>
 
 @code {
+
+    [Parameter]
+    public Guid Token { get; set; }
+
     bool success;
     MudTextField<string> pwField1;
     MudForm form;
@@ -55,6 +56,10 @@
         if (pwField1.Value != arg)
             return "Passwords don't match";
         return null;
+    }
+
+    private async Task CreateUser()
+    {
     }
 
 }
