@@ -40,22 +40,26 @@
         <MudAlert Severity="Severity.Info">Here you can manage current invitations.</MudAlert>
         <MudPaper Class="pa-4">
             <h2 style="margin-bottom: 1em;">Manage current invitations</h2>
-            <MudTable Items="new List<string>()">
+            <MudTable Items="invitations">
                 <HeaderContent>
-                    <MudTh>@_localizer["Email"]</MudTh>
-                    <MudTh>@_localizer["Role"]</MudTh>
+                    <MudTh><b>@_localizer["Email"]</b></MudTh>
+                    <MudTh><b>@_localizer["Role"]</b></MudTh>
+                    <MudTh><b>@_localizer["CreatedAt"]</b></MudTh>
+                    <MudTh><b>@_localizer["Actions"]</b></MudTh>
                 </HeaderContent>
                 <RowTemplate>
-                    @foreach (var invite in invitations)
-                    {
-                        <MudTr>
-                            <MudTd>@invite.Email</MudTd>
-                            <MudTd>@roles.Find(r => r.Id == invite.RoleId)?.Name</MudTd>
-                        </MudTr>
-                    }
+                    <MudTd>@context.Email</MudTd>
+                    <MudTd>@roles.Find(r => r.Id == context.RoleId)?.Name</MudTd>
+                    <MudTd>@context.CreatedAt.ToShortDateString()</MudTd>
                     <MudTd>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">@_localizer["Resend"]</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Secondary">@_localizer["Delete"]</MudButton>
+                        <div class="d-flex pa-4">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="() => ChangeRole(context.RoleId)">
+                                @_localizer["ChangeRole"]
+                            </MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => DeleteUser(context.Id)">
+                                @_localizer["Delete"]
+                            </MudButton>
+                        </div>
                     </MudTd>
                 </RowTemplate>
             </MudTable>
@@ -65,28 +69,28 @@
         <MudAlert Severity="Severity.Info">Here you can manage current users.</MudAlert>
         <MudPaper Class="pa-4">
             <h2 style="margin-bottom: 1em;">Manage current users</h2>
-            <MudTable Items="new List<string>()">
+            <MudTable Items="@users" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
                 <HeaderContent>
-                    <MudTh>@_localizer["Email"]</MudTh>
-                    <MudTh>@_localizer["Role"]</MudTh>
-                    <MudTh>@_localizer["FirstName"]</MudTh>
-                    <MudTh>@_localizer["LastName"]</MudTh>
-                    <MudTh>@_localizer["Actions"]</MudTh>
+                    <MudTh><b>@_localizer["Email"]</b></MudTh>
+                    <MudTh><b>@_localizer["Role"]</b></MudTh>
+                    <MudTh><b>@_localizer["FirstName"]</b></MudTh>
+                    <MudTh><b>@_localizer["LastName"]</b></MudTh>
+                    <MudTh><b>@_localizer["Actions"]</b></MudTh>
                 </HeaderContent>
                 <RowTemplate>
-                    @foreach (var user in users)
-                    {
-                        <MudTr>
-                            <MudTd>@user.Email</MudTd>
-                            <MudTd>@roles.Find(r => r.Id == user.RoleId)?.Name</MudTd>
-                            <MudTd>@user.FirstName</MudTd>
-                            <MudTd>@user.LastName</MudTd>
-                            <MudTd>todo: actions</MudTd>
-                        </MudTr>
-                    }
+                    <MudTd>@context.Email</MudTd>
+                    <MudTd>@roles.Find(r => r.Id == context.RoleId)?.Name</MudTd>
+                    <MudTd>@context.FirstName</MudTd>
+                    <MudTd>@context.LastName</MudTd>
                     <MudTd>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">@_localizer["Resend"]</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Secondary">@_localizer["Delete"]</MudButton>
+                        <div class="d-flex pa-4">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="() => ResendInvitation(context.Id)">
+                                @_localizer["Resend"]
+                            </MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => DeleteInvitation(context.Id)">
+                                @_localizer["Delete"]
+                            </MudButton>
+                        </div>
                     </MudTd>
                 </RowTemplate>
             </MudTable>
@@ -101,39 +105,28 @@
     MudForm form;
     List<Role> roles = new List<Role>();
     List<User> users = new List<User>();
-    List<CreateUser> invitations = new List<CreateUser>();
+    List<Invitation> invitations = new List<Invitation>();
     MudTextField<string> email;
     MudSelect<string> role;
 
     protected override async Task OnInitializedAsync()
     {
-        var roleRes = await HttpUtils.Get<List<Role>>("role", await CheckJwt());
-        if (roleRes == null)
-        {
-            NavigationManager.NavigateTo("/login");
-            return;
-        }
-        roles = roleRes;
+        var jwt = await CheckJwt();
+        var roleRes = await HttpUtils.Get<List<Role>>("role", jwt);
+        var invitationRes = await HttpUtils.Get<List<Invitation>>("configuser/invitation", jwt);
+        var userRes = await HttpUtils.Get<List<User>>("configuser", jwt);
 
-        var invitationRes = await HttpUtils.Get<List<CreateUser>>("configuser/invitation", await CheckJwt());
-        if (invitationRes == null)
+        if (userRes == null || invitationRes == null || roleRes == null)
         {
             NavigationManager.NavigateTo("/login");
             return;
         }
+
+        roles = roleRes;
+        users = userRes;
         invitations = invitationRes;
 
-        var userRes = await HttpUtils.Get<List<User>>("configuser", await CheckJwt());
-        if (userRes == null)
-        {
-            NavigationManager.NavigateTo("/login");
-            return;
-        }
-        users = userRes;
-
-        Console.WriteLine(roles.Count);
-        Console.WriteLine(users.Count);
-        Console.WriteLine(invitations.Count);
+        await base.OnInitializedAsync();
     }
 
     async Task<string> CheckJwt()
@@ -160,5 +153,25 @@
         }
 
         form.Reset();
+    }
+
+    private static async Task ChangeRole(int id)
+    {
+        
+    }
+
+    private static async Task DeleteUser(int id)
+    {
+
+    }
+
+    private static async Task ResendInvitation(int id)
+    {
+
+    }
+
+    private static async Task DeleteInvitation(int id)
+    {
+
     }
 }
