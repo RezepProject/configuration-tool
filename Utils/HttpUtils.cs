@@ -5,8 +5,9 @@ namespace ConfigurationTool.Utils;
 
 public static class HttpUtils
 {
+    //ToDo: Fix before Production
     private const string BASE_URL = "http://localhost:5260/";
-    
+
     public static async Task<T?> Get<T>(string url)
     {
         try
