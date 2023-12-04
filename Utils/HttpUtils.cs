@@ -38,12 +38,15 @@ public static class HttpUtils
         }
     }
 
-    public static async Task<T?> Post<T>(string url, object obj, string jwtToken = "")
+    public static async Task<T?> Post<T>(string url, object? obj, string jwtToken = "")
     {
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Post, BASE_URL + url);
-            request.Content = new StringContent(JsonSerializer.Serialize(obj), Encoding.UTF8, "application/json");
+
+            if(obj != null)
+                request.Content = new StringContent(JsonSerializer.Serialize(obj), Encoding.UTF8, "application/json");
+
             var client = new HttpClient();
 
             if(!string.IsNullOrEmpty(jwtToken))
@@ -67,12 +70,15 @@ public static class HttpUtils
         }
     }
 
-    public static async Task<T?> Put<T>(string url, object obj, string jwtToken = "")
+    public static async Task<T?> Put<T>(string url, object? obj, string jwtToken = "")
     {
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Put, BASE_URL + url);
-            request.Content = new StringContent(JsonSerializer.Serialize(obj), Encoding.UTF8, "application/json");
+
+            if(obj != null)
+                request.Content = new StringContent(JsonSerializer.Serialize(obj), Encoding.UTF8, "application/json");
+
             var client = new HttpClient();
 
             if(!string.IsNullOrEmpty(jwtToken))

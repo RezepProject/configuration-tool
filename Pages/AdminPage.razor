@@ -53,10 +53,10 @@
                     <MudTd>@context.CreatedAt.ToShortDateString()</MudTd>
                     <MudTd>
                         <div class="d-flex pa-4">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="() => ChangeRole(context.RoleId)">
-                                @_localizer["ChangeRole"]
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="() => ResendInvitation(context.Id)">
+                                @_localizer["Resend"]
                             </MudButton>
-                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => DeleteUser(context.Id)">
+                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => DeleteInvitation(context.Id)">
                                 @_localizer["Delete"]
                             </MudButton>
                         </div>
@@ -84,10 +84,10 @@
                     <MudTd>@context.LastName</MudTd>
                     <MudTd>
                         <div class="d-flex pa-4">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="() => ResendInvitation(context.Id)">
-                                @_localizer["Resend"]
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="() => OpenEditUser(context.Id)">
+                                @_localizer["ChangeRole"]
                             </MudButton>
-                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => DeleteInvitation(context.Id)">
+                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => DeleteUser(context.Id, context.Email)">
                                 @_localizer["Delete"]
                             </MudButton>
                         </div>
@@ -113,7 +113,7 @@
     {
         var jwt = await CheckJwt();
         var roleRes = await HttpUtils.Get<List<Role>>("role", jwt);
-        var invitationRes = await HttpUtils.Get<List<Invitation>>("configuser/invitation", jwt);
+        var invitationRes = await GetInvitations(jwt);
         var userRes = await HttpUtils.Get<List<User>>("configuser", jwt);
 
         if (userRes == null || invitationRes == null || roleRes == null)
@@ -155,23 +155,72 @@
         form.Reset();
     }
 
-    private static async Task ChangeRole(int id)
+    private async Task OpenEditUser(int id)
     {
-        
+        // TODO
     }
 
-    private static async Task DeleteUser(int id)
+    private async Task ChangeRole(int id)
     {
-
+        // TODO
     }
 
-    private static async Task ResendInvitation(int id)
+    private async Task DeleteUser(int id, string email)
     {
+        if(email == await Localstorage.GetItemAsync<string>("email"))
+        {
+            // TODO: info
+            return;
+        }
 
+        var res = await HttpUtils.Delete<object>($"configuser/{id}", await CheckJwt());
+
+        if (res is string s && s.Contains("Unauthorized"))
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
+        users.RemoveAll(u => u.Id == id);
+
+        // TODO: animation?
     }
 
-    private static async Task DeleteInvitation(int id)
+    private async Task ResendInvitation(int id)
+    {
+        var res = await HttpUtils.Post<object>($"configuser/invitation/{id}/resend", null, await CheckJwt());
+        if (res is string s && s.Contains("Unauthorized"))
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
+        await UpdateInvitations();
+        // TODO: animation
+    }
+
+    private async Task DeleteInvitation(int id)
     {
 
+        var res = await HttpUtils.Delete<object>($"configuser/invitation/{id}", await CheckJwt());
+        if (res is string s && s.Contains("Unauthorized"))
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
+        await UpdateInvitations();
+    }
+
+    private async Task<List<Invitation>?> GetInvitations(string jwt)
+    {
+        return await HttpUtils.Get<List<Invitation>>("configuser/invitation", jwt);
+    }
+
+    private async Task UpdateInvitations()
+    {
+        var invitationRes = await GetInvitations(await CheckJwt());
+        if (invitationRes == null) return;
+        invitations = invitationRes;
     }
 }
