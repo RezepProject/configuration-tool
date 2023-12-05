@@ -87,4 +87,61 @@
     <data name="Password" xml:space="preserve">
         <value>Passwort</value>
     </data>
+    <data name="NameRequiredErrorMessage" xml:space="preserve">
+        <value>Dein Name ist erfoderlich</value>
+    </data>
+    <data name="LastNameRequiredErrorMessage" xml:space="preserve">
+        <value>Dein Nachname ist erforderlich!</value>
+    </data>
+    <data name="EmailRequiredErrorMessage" xml:space="preserve">
+        <value>Email erforderlich!</value>
+    </data>
+    <data name="FirstName" xml:space="preserve">
+        <value>Vorname</value>
+    </data>
+    <data name="LastName" xml:space="preserve">
+        <value>Nachname</value>
+    </data>
+    <data name="PasswordConfirmErrorMessage" xml:space="preserve">
+        <value>Dein Passwort stimmt nicht überein!</value>
+    </data>
+    <data name="PasswordConfirmRequiredErrorMessage" xml:space="preserve">
+        <value>Bitte bestätige dein Passwort!</value>
+    </data>
+    <data name="PasswordRequiredErrorMessage" xml:space="preserve">
+        <value>Dein Passwort ist erforderlich!</value>
+    </data>
+    <data name="AgreeToTOS" xml:space="preserve">
+        <value>Sie müssen den AGBs zustimmen!</value>
+    </data>
+    <data name="IAgreeToTOS" xml:space="preserve">
+        <value>Ich stimme den AGBs zu!</value>
+    </data>
+    <data name="PasswordCapitalLetter" xml:space="preserve">
+        <value>Das Passwort muss mindestens einen Großbuchstaben enthalten!</value>
+    </data>
+    <data name="PasswordDigit" xml:space="preserve">
+        <value>Das Passwort muss mindestens eine Ziffer enthalten!</value>
+    </data>
+    <data name="PasswordLength" xml:space="preserve">
+        <value>Das Passwort muss mindestens die Länge 8 haben!</value>
+    </data>
+    <data name="PasswordLowercaseLetter" xml:space="preserve">
+        <value>Das Passwort muss mindestens einen Kleinbuchstaben enthalten!</value>
+    </data>
+    <data name="PasswordMatch" xml:space="preserve">
+        <value>Passwörter stimmen nicht überein!</value>
+    </data>
+    <data name="PasswordStrength" xml:space="preserve">
+        <value>Wählen Sie ein sicheres Passwort!</value>
+    </data>
+    <data name="Register" xml:space="preserve">
+        <value>Registrieren</value>
+    </data>
+    <data name="RepeatPassword" xml:space="preserve">
+        <value>Wiederholen Sie das Passwort!</value>
+    </data>
+    <data name="NotImplemented" xml:space="preserve">
+        <value>Noch nicht implementiert!</value>
+    </data>
 </root>
