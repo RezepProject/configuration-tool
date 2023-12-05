@@ -23,3 +23,12 @@ public class Invitation
     public DateTime CreatedAt { get; set; }
     public int RoleId { get; set; }
 }
+
+public class NewUser
+{
+    public int Id { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Password { get; set; }
+    public string Token { get; set; }
+}

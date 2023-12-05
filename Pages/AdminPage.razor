@@ -40,7 +40,7 @@
         <MudAlert Severity="Severity.Info">Here you can manage current invitations.</MudAlert>
         <MudPaper Class="pa-4">
             <h2 style="margin-bottom: 1em;">Manage current invitations</h2>
-            <MudTable Items="invitations">
+            <MudTable Items="invitations" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
                 <HeaderContent>
                     <MudTh><b>@_localizer["Email"]</b></MudTh>
                     <MudTh><b>@_localizer["Role"]</b></MudTh>
