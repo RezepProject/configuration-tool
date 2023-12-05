@@ -1,24 +1,25 @@
 ﻿@page "/register/{Token:guid}"
 @using System.Text.RegularExpressions
+@inject IStringLocalizer<ApplicationResource> _localizer
 
-<PageTitle>Register</PageTitle>
-<MudText Typo="Typo.h3" GutterBottom="true">Register: @Token</MudText>
+<PageTitle>@_localizer["Register"]</PageTitle>
+<MudText Typo="Typo.h3" GutterBottom="true">@_localizer["Register"]: @Token</MudText>
 <MudGrid>
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@success">
-                <MudTextField T="string" Label="First name" Required="true" RequiredError="Your first name is required!"/>
-                <MudTextField T="string" Label="Last name" Required="true" RequiredError="Your last name is required!"/>
-                <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pwField1"
+                <MudTextField T="string" Label=@_localizer["FirstName"] Required="true" RequiredError=@_localizer["NameRequiredErrorMessage"]/>
+                <MudTextField T="string" Label=@_localizer["LastName"] Required="true" RequiredError=@_localizer["LastNameRequiredErrorMessage"]/>
+                <MudTextField T="string" Label=@_localizer["Password"] HelperText=@_localizer["PasswordStrength"] @ref="pwField1"
                               InputType="InputType.Password"
                               Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
-                              RequiredError="Password is required!"/>
+                              RequiredError=@_localizer["PasswordRequired"]/>
                 <MudTextField T="string"
-                              Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
+                              Label=@_localizer["Password"] HelperText=@_localizer["RepeatPassword"] InputType="InputType.Password"
                               Validation="@(new Func<string, string>(PasswordMatch))"/>
                 <div class="d-flex align-center justify-space-between">
-                    <MudCheckBox T="bool" Required="true" RequiredError="You must agree to your TOS!" Label="I agree to the TOS!"/>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Register</MudButton>
+                    <MudCheckBox T="bool" Required="true" RequiredError=@_localizer["AgreeToTOS"] Label=@_localizer["IAgreeToTOS"]/>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">@_localizer["Register"]</MudButton>
                 </div>
             </MudForm>
         </MudPaper>
@@ -38,23 +39,23 @@
     {
         if (string.IsNullOrWhiteSpace(pw))
         {
-            yield return "Password is required!";
+            yield return @_localizer["PasswordRequired"];
             yield break;
         }
         if (pw.Length < 8)
-            yield return "Password must be at least of length 8";
+            yield return @_localizer["PasswordLength"];
         if (!Regex.IsMatch(pw, @"[A-Z]"))
-            yield return "Password must contain at least one capital letter";
+            yield return @_localizer["PasswordCapitalLetter"];
         if (!Regex.IsMatch(pw, @"[a-z]"))
-            yield return "Password must contain at least one lowercase letter";
+            yield return @_localizer["PasswordLowercaseLetter"];
         if (!Regex.IsMatch(pw, @"[0-9]"))
-            yield return "Password must contain at least one digit";
+            yield return @_localizer["PasswordDigit"];
     }
 
     private string PasswordMatch(string arg)
     {
         if (pwField1.Value != arg)
-            return "Passwords don't match";
+            return @_localizer["PasswordMatch"];
         return null;
     }
 
