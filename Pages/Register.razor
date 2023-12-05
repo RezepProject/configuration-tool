@@ -10,12 +10,14 @@
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@success">
-                <MudTextField T="string" Label="First name" Required="true" RequiredError="Your first name is required!" @ref="firstName" />
-                <MudTextField T="string" Label="Last name" Required="true" RequiredError="Your last name is required!" @ref="lastName" />
-                <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pwField1"
-                              InputType="InputType.Password"
-                              Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
-                              RequiredError="Password is required!"/>
+                <MudTextField T="string" Label="First name" Required="true" RequiredError="Your first name is required!" @bind-Value="firstName" />
+                <MudTextField T="string" Label="Last name" Required="true" RequiredError="Your last name is required!" @bind-Value="lastName" />
+                <MudTextField @bind-Value="password" Label="Password" HelperText="Choose a strong password"
+                              Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))"
+                              RequiredError="Password is required!" Required="true"
+                              Variant="Variant.Text" InputType="@PasswordInput"
+                              Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="EyeBtnClick"
+                              AdornmentAriaLabel="Show Password" />
                 <MudTextField T="string"
                               Label="Password" HelperText="Repeat the password" Required="true" InputType="InputType.Password"
                               Validation="@(new Func<string, string>(PasswordMatch))"/>
@@ -33,10 +35,29 @@
     public Guid Token { get; set; }
 
     bool success;
-    MudTextField<string> pwField1;
-    MudTextField<string> firstName;
-    MudTextField<string> lastName;
+    string password;
+    string firstName;
+    string lastName;
     MudForm form;
+
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    void EyeBtnClick()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
 
     private IEnumerable<string> PasswordStrength(string pw)
     {
@@ -57,16 +78,16 @@
 
     private string? PasswordMatch(string arg)
     {
-        return pwField1.Value != arg ? "Passwords don't match" : null;
+        return password != arg ? "Passwords don't match" : null;
     }
 
     private async Task CreateUser()
     {
         var user = new NewUser()
         {
-            FirstName = firstName.Value,
-            LastName = lastName.Value,
-            Password = pwField1.Value,
+            FirstName = firstName,
+            LastName = lastName,
+            Password = password,
             Token = Token.ToString()
         };
 
