@@ -26,9 +26,14 @@
             <NotAuthorized>
                <MudPaper Class="pa-4">
                    <MudForm @bind-IsValid="@_success" @ref="_form">
-                       <MudTextField T="string" Label="Email" Required="true" @ref="_id" RequiredError=@Localizer["EmailRequired"]/>
-                       <MudTextField T="string" Label=@Localizer["Password"] Required="true" @ref="_pw" RequiredError=@Localizer["PasswordRequired"]/>
-                       <div class="d-flex align-center justify-space-between">
+                       <MudTextField T="string" Label="Email" Required="true" @bind-Value="id" RequiredError=@Localizer["EmailRequired"]/>
+                       <MudTextField @bind-Value="password" Label=@Localizer["Password"]
+                                     RequiredError=@Localizer["PasswordRequired"] Required="true"
+                                     Variant="Variant.Text" InputType="@PasswordInput"
+                                     Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="EyeBtnClick"
+                                     AdornmentAriaLabel="Show Password" />
+
+                       <div class="d-flex align-center justify-space-between mt-4">
                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto" OnClick="HandleLogin">Login</MudButton>
                        </div>
                    </MudForm>
@@ -41,8 +46,27 @@
 @code {
     bool _success;
     MudForm _form;
-    MudTextField<string> _pw;
-    MudTextField<string> _id;
+    string password;
+    string id;
+
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    void EyeBtnClick()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
 
     public void LogOut()
     {
@@ -54,8 +78,8 @@
     {
         var user = new UserLoginDto
         {
-            UserIdentificator = _id.Value,
-            Password = _pw.Value
+            UserIdentificator = id,
+            Password = password
         };
 
         var token = await HttpUtils.Post<string>("authentication", user);
