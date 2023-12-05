@@ -1,9 +1,10 @@
+@inject IStringLocalizer<ApplicationResource> _localizer
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <MudAlert>Sorry, you're not authorized to access this page.</MudAlert>
+                    <MudAlert>@_localizer["NotAuthorized"]</MudAlert>
                 </NotAuthorized>
             </AuthorizeRouteView>
         </Found>

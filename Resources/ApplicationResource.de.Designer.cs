@@ -60,11 +60,65 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hier kannst du neue Benutzer hinzufügen. Bitte füge die mail adresse, der person die die du hinzufügen möchtest unten ein..
+        /// </summary>
+        internal static string AddNewMembers {
+            get {
+                return ResourceManager.GetString("AddNewMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Admin Seite.
+        /// </summary>
+        internal static string AdminPage {
+            get {
+                return ResourceManager.GetString("AdminPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sie müssen den AGBs zustimmen!.
+        /// </summary>
+        internal static string AgreeToTOS {
+            get {
+                return ResourceManager.GetString("AgreeToTOS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Du bist bereits eingeloggt!.
+        /// </summary>
+        internal static string AlreadyLoggedIn {
+            get {
+                return ResourceManager.GetString("AlreadyLoggedIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Antwort.
         /// </summary>
         internal static string Answer {
             get {
                 return ResourceManager.GetString("Answer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Du musst eine Email eingeben!.
+        /// </summary>
+        internal static string EmailRequired {
+            get {
+                return ResourceManager.GetString("EmailRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email erforderlich!.
+        /// </summary>
+        internal static string EmailRequiredErrorMessage {
+            get {
+                return ResourceManager.GetString("EmailRequiredErrorMessage", resourceCulture);
             }
         }
         
@@ -96,11 +150,29 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Vorname.
+        /// </summary>
+        internal static string FirstName {
+            get {
+                return ResourceManager.GetString("FirstName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hallo und Willkommen bei Rezep.
         /// </summary>
         internal static string Greating {
             get {
                 return ResourceManager.GetString("Greating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ich stimme den AGBs zu!.
+        /// </summary>
+        internal static string IAgreeToTOS {
+            get {
+                return ResourceManager.GetString("IAgreeToTOS", resourceCulture);
             }
         }
         
@@ -114,11 +186,155 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Du bist nicht autoriesiert.
+        ///   Looks up a localized string similar to Nachname.
+        /// </summary>
+        internal static string LastName {
+            get {
+                return ResourceManager.GetString("LastName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dein Nachname ist erforderlich!.
+        /// </summary>
+        internal static string LastNameRequiredErrorMessage {
+            get {
+                return ResourceManager.GetString("LastNameRequiredErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Einloggen.
+        /// </summary>
+        internal static string LoginButton {
+            get {
+                return ResourceManager.GetString("LoginButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dein Name ist erfoderlich.
+        /// </summary>
+        internal static string NameRequiredErrorMessage {
+            get {
+                return ResourceManager.GetString("NameRequiredErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Du hast nicht die nötige berechtigung um auf diese Seite zu zugreifen..
         /// </summary>
         internal static string NotAuthorized {
             get {
                 return ResourceManager.GetString("NotAuthorized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Noch nicht implementiert!.
+        /// </summary>
+        internal static string NotImplemented {
+            get {
+                return ResourceManager.GetString("NotImplemented", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passwort.
+        /// </summary>
+        internal static string Password {
+            get {
+                return ResourceManager.GetString("Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Das Passwort muss mindestens einen Großbuchstaben enthalten!.
+        /// </summary>
+        internal static string PasswordCapitalLetter {
+            get {
+                return ResourceManager.GetString("PasswordCapitalLetter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dein Passwort stimmt nicht überein!.
+        /// </summary>
+        internal static string PasswordConfirmErrorMessage {
+            get {
+                return ResourceManager.GetString("PasswordConfirmErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bitte bestätige dein Passwort!.
+        /// </summary>
+        internal static string PasswordConfirmRequiredErrorMessage {
+            get {
+                return ResourceManager.GetString("PasswordConfirmRequiredErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Das Passwort muss mindestens eine Ziffer enthalten!.
+        /// </summary>
+        internal static string PasswordDigit {
+            get {
+                return ResourceManager.GetString("PasswordDigit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Das Passwort muss mindestens die Länge 8 haben!.
+        /// </summary>
+        internal static string PasswordLength {
+            get {
+                return ResourceManager.GetString("PasswordLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Das Passwort muss mindestens einen Kleinbuchstaben enthalten!.
+        /// </summary>
+        internal static string PasswordLowercaseLetter {
+            get {
+                return ResourceManager.GetString("PasswordLowercaseLetter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Passwörter stimmen nicht überein!.
+        /// </summary>
+        internal static string PasswordMatch {
+            get {
+                return ResourceManager.GetString("PasswordMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Du musst ein Passwort eingeben!.
+        /// </summary>
+        internal static string PasswordRequired {
+            get {
+                return ResourceManager.GetString("PasswordRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dein Passwort ist erforderlich!.
+        /// </summary>
+        internal static string PasswordRequiredErrorMessage {
+            get {
+                return ResourceManager.GetString("PasswordRequiredErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wählen Sie ein sicheres Passwort!.
+        /// </summary>
+        internal static string PasswordStrength {
+            get {
+                return ResourceManager.GetString("PasswordStrength", resourceCulture);
             }
         }
         
@@ -146,6 +362,33 @@ namespace ConfigurationTool.Resources {
         internal static string QuestionsManagement {
             get {
                 return ResourceManager.GetString("QuestionsManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registrieren.
+        /// </summary>
+        internal static string Register {
+            get {
+                return ResourceManager.GetString("Register", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Benutzer regestrieren.
+        /// </summary>
+        internal static string RegisterUser {
+            get {
+                return ResourceManager.GetString("RegisterUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wiederholen Sie das Passwort!.
+        /// </summary>
+        internal static string RepeatPassword {
+            get {
+                return ResourceManager.GetString("RepeatPassword", resourceCulture);
             }
         }
         

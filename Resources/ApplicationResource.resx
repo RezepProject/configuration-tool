@@ -148,7 +148,7 @@
     <value>Answer</value>
   </data>
   <data name="ErrorTextInputQuestionManagment" xml:space="preserve">
-    <value>Pleace enter at least 10 characters</value>
+    <value>Place enter at least 10 characters</value>
   </data>
   <data name="SelectLanguage" xml:space="preserve">
     <value>Choose a language</value>
@@ -160,6 +160,108 @@
     <value>Reset</value>
   </data>
   <data name="NotAuthorized" xml:space="preserve">
-    <value>You're not autherized</value>
+    <value>Sorry, you're not authorized to access this page.</value>
   </data>
+  <data name="LoginButton" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="AddNewMembers" xml:space="preserve">
+    <value>Here you can add new members. Please enter the mail address of the person you want to add. They will get a mail and log in.</value>
+  </data>
+  <data name="RegisterUser" xml:space="preserve">
+    <value>Register User</value>
+  </data>
+  <data name="AdminPage" xml:space="preserve">
+    <value>Admin Page</value>
+  </data>
+  <data name="AlreadyLoggedIn" xml:space="preserve">
+    <value>You are already, logged in!</value>
+  </data>
+  <data name="EmailRequired" xml:space="preserve">
+    <value>Email is required!</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="NameRequiredErrorMessage" xml:space="preserve">
+    <value>Your first name is required!</value>
+  </data>
+    <data name="LastNameRequiredErrorMessage" xml:space="preserve">
+        <value>Your last name is required!</value>
+    </data>
+    <data name="EmailRequiredErrorMessage" xml:space="preserve">
+        <value>Your email is required!</value>
+    </data>
+    <data name="PasswordRequiredErrorMessage" xml:space="preserve">
+        <value>Your password is required!</value>
+    </data>
+    <data name="PasswordConfirmRequiredErrorMessage" xml:space="preserve">
+        <value>Please confirm your password!</value>
+    </data>
+    <data name="PasswordConfirmErrorMessage" xml:space="preserve">
+        <value>Your passwords do not match!</value>
+    </data>
+  //Add First Name
+    <data name="FirstName" xml:space="preserve">
+        <value>First Name</value>
+    </data>
+    //Add Last Name
+    <data name="LastName" xml:space="preserve">
+        <value>Last Name</value>
+    </data>
+   //Add Password
+  //Add Choose a strong password!
+    <data name="PasswordStrength" xml:space="preserve">
+        <value>Choose a strong password!</value>
+    </data>
+  //Add Password is required!
+    <data name="PasswordRequired" xml:space="preserve">
+        <value>Password is required!</value>
+    </data>
+  //Add Repeat the password!
+    <data name="RepeatPassword" xml:space="preserve">
+        <value>Repeat the password!</value>
+    </data>
+  //Add You must agree to your TOS!
+    <data name="AgreeToTOS" xml:space="preserve">
+        <value>You must agree to your TOS!</value>
+    </data>
+  //Add I agree to the TOS!
+    <data name="IAgreeToTOS" xml:space="preserve">
+        <value>I agree to the TOS!</value>
+    </data>
+  //Add Register
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  //Add Password must be at least of length 8"
+  <data name="PasswordLength" xml:space="preserve">
+    <value>Password must be at least of length 8!</value>
+  </data>
+    //Add Password must contain at least one capital letter
+  <data name="PasswordCapitalLetter" xml:space="preserve">
+    <value>Password must contain at least one capital letter!</value>
+  </data>
+  //Add Password must contain at least one lowercase letter
+  <data name="PasswordLowercaseLetter" xml:space="preserve">
+    <value>Password must contain at least one lowercase letter!</value>
+  </data>
+  //Add Password must contain at least one digit
+    <data name="PasswordDigit" xml:space="preserve">
+        <value>Password must contain at least one digit</value>
+    </data>
+  //Passwords don't match
+  <data name="PasswordMatch" xml:space="preserve">
+    <value>Passwords don't match!</value>
+  </data>
+  //NOT IMPLEMENTED! (yet)
+    <data name="NotImplemented" xml:space="preserve">
+        <value>NOT IMPLEMENTED! (yet)</value>
+    </data>
+  
+  
+  
+  
+  
+  
 </root>

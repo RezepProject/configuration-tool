@@ -1,4 +1,6 @@
-namespace backend.Entities;
+using backend.Entities;
+
+namespace ConfigurationTool.Model;
 
 public class Role
 {

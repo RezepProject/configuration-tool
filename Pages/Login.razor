@@ -1,12 +1,10 @@
-﻿@page "/login"
+@page "/login"
 @using ConfigurationTool.Model
 @using ConfigurationTool.Utils
-@using Blazored.LocalStorage
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService Localstorage;
 @inject NavigationManager Navigation;
-@inject NavigationManager NavManager
-@inject ILocalStorageService _localstorage;
+@inject IStringLocalizer<ApplicationResource> _localizer
 
 <PageTitle>Login</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">Login</MudText>
@@ -18,7 +16,7 @@
                     <MudForm @bind-IsValid="@_success" @ref="_form">
                         <h2>Are you sure you want to log out?</h2>
                         <div style="margin-top: 1em">
-                            <MudButton Variant="Variant.Filled" Color="Color.Info" Class="ml-auto" OnClick='() => NavManager.NavigateTo("/")'>Cancel</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Info" Class="ml-auto" OnClick='() => Navigation.NavigateTo("/")'>Cancel</MudButton>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@LogOut">Logout</MudButton>
                         </div>
                     </MudForm>
@@ -36,6 +34,15 @@
                 </MudPaper>
             </NotAuthorized>
         </AuthorizeView>
+        <MudPaper Class="pa-4">
+            <MudForm @bind-IsValid="@_success" @ref="_form">
+                <MudTextField T="string" Label="Email" Required="true" @ref="_id" RequiredError=@_localizer["EmailRequired"]/>
+                <MudTextField T="string" Label=@_localizer["Password"] Required="true" @ref="_pw" RequiredError=@_localizer["PasswordRequired"]/>
+                <div class="d-flex align-center justify-space-between">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto" OnClick="HandleLogin">Login</MudButton>
+                </div>
+            </MudForm>
+        </MudPaper>
     </MudItem>
 </MudGrid>
 
@@ -47,8 +54,8 @@
 
     public void LogOut()
     {
-        _localstorage.RemoveItemAsync("token");
-        NavManager.NavigateTo("/login", true);
+        Localstorage.RemoveItemAsync("token");
+        Navigation.NavigateTo("/login", true);
     }
 
     async Task HandleLogin()
@@ -69,6 +76,7 @@
         }
 
         await Localstorage.SetItemAsync("token", token);
+        await Localstorage.SetItemAsync("email", user.UserIdentificator);
         await AuthStateProvider.GetAuthenticationStateAsync();
         Navigation.NavigateTo("/");
     }
