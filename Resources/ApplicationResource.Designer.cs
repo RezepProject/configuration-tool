@@ -132,7 +132,7 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pleace enter at least 10 characters.
+        ///   Looks up a localized string similar to Place enter at least 10 characters.
         /// </summary>
         public static string ErrorTextInputQuestionManagment {
             get {

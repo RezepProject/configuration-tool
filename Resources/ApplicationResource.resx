@@ -148,7 +148,7 @@
     <value>Answer</value>
   </data>
   <data name="ErrorTextInputQuestionManagment" xml:space="preserve">
-    <value>Pleace enter at least 10 characters</value>
+    <value>Place enter at least 10 characters</value>
   </data>
   <data name="SelectLanguage" xml:space="preserve">
     <value>Choose a language</value>
@@ -180,9 +180,6 @@
   <data name="EmailRequired" xml:space="preserve">
     <value>Email is required!</value>
   </data>
-  <data name="PasswordRequired" xml:space="preserve">
-    <value>Password is required!</value>
-  </data>
   <data name="Password" xml:space="preserve">
     <value>Password</value>
   </data>
@@ -213,9 +210,6 @@
         <value>Last Name</value>
     </data>
    //Add Password
-   <data name="Password" xml:space="preserve">
-     <value>Password</value>
-   </data>
   //Add Choose a strong password!
     <data name="PasswordStrength" xml:space="preserve">
         <value>Choose a strong password!</value>
@@ -240,10 +234,6 @@
   <data name="Register" xml:space="preserve">
     <value>Register</value>
   </data>
-  //Add Password is required!
-    <data name="PasswordRequired" xml:space="preserve">
-        <value>Password is required!</value>
-    </data>
   //Add Password must be at least of length 8"
   <data name="PasswordLength" xml:space="preserve">
     <value>Password must be at least of length 8!</value>
