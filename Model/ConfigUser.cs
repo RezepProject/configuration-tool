@@ -1,4 +1,4 @@
-namespace backend.Entities;
+namespace ConfigurationTool.Model;
 
 public class ConfigUser
 {

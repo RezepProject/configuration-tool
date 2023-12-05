@@ -1,10 +1,11 @@
 @page "/login"
 @using ConfigurationTool.Model
 @using ConfigurationTool.Utils
+@using Blazored.LocalStorage
 @inject AuthenticationStateProvider AuthStateProvider
-@inject ILocalStorageService Localstorage;
-@inject NavigationManager Navigation;
-@inject IStringLocalizer<ApplicationResource> _localizer
+@inject ILocalStorageService Localstorage
+@inject NavigationManager Navigation
+@inject IStringLocalizer<ApplicationResource> Localizer
 
 <PageTitle>Login</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">Login</MudText>
@@ -23,26 +24,17 @@
                 </MudPaper>
             </Authorized>
             <NotAuthorized>
-                <MudPaper Class="pa-4">
-                    <MudForm @bind-IsValid="@_success" @ref="_form">
-                        <MudTextField T="string" Label="Email" Required="true" @ref="_id" RequiredError="Email is required!"/>
-                        <MudTextField T="string" Label="Password" Required="true" @ref="_pw" RequiredError="Password is required!"/>
-                        <div class="d-flex align-center justify-space-between">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto" OnClick="HandleLogin">Login</MudButton>
-                        </div>
-                    </MudForm>
-                </MudPaper>
+               <MudPaper Class="pa-4">
+                   <MudForm @bind-IsValid="@_success" @ref="_form">
+                       <MudTextField T="string" Label="Email" Required="true" @ref="_id" RequiredError=@Localizer["EmailRequired"]/>
+                       <MudTextField T="string" Label=@Localizer["Password"] Required="true" @ref="_pw" RequiredError=@Localizer["PasswordRequired"]/>
+                       <div class="d-flex align-center justify-space-between">
+                           <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto" OnClick="HandleLogin">Login</MudButton>
+                       </div>
+                   </MudForm>
+               </MudPaper>
             </NotAuthorized>
         </AuthorizeView>
-        <MudPaper Class="pa-4">
-            <MudForm @bind-IsValid="@_success" @ref="_form">
-                <MudTextField T="string" Label="Email" Required="true" @ref="_id" RequiredError=@_localizer["EmailRequired"]/>
-                <MudTextField T="string" Label=@_localizer["Password"] Required="true" @ref="_pw" RequiredError=@_localizer["PasswordRequired"]/>
-                <div class="d-flex align-center justify-space-between">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto" OnClick="HandleLogin">Login</MudButton>
-                </div>
-            </MudForm>
-        </MudPaper>
     </MudItem>
 </MudGrid>
 

@@ -1,7 +1,7 @@
 ﻿@page "/"
-@inject IStringLocalizer<ApplicationResource> _localizer
+@inject IStringLocalizer<ApplicationResource> Localizer
 
 <PageTitle>Index</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">@_localizer["Greating"]</MudText>
-<MudText Class="mb-8">@_localizer["WelcomeMessageText"]</MudText>
+<MudText Typo="Typo.h3" GutterBottom="true">@Localizer["Greating"]</MudText>
+<MudText Class="mb-8">@Localizer["WelcomeMessageText"]</MudText>

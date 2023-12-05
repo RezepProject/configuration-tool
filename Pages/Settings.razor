@@ -1,11 +1,11 @@
 ﻿@page "/settings"
 @using System.Globalization
-@inject IStringLocalizer<ApplicationResource> _localizer
-<PageTitle>@_localizer["Settings"]</PageTitle>
+@inject IStringLocalizer<ApplicationResource> Localizer
+<PageTitle>@Localizer["Settings"]</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">@_localizer["Settings"]</MudText>
+<MudText Typo="Typo.h3" GutterBottom="true">@Localizer["Settings"]</MudText>
 
-<MudSelect Label=@_localizer["SelectLanguage"] @bind-Value="Culture" Variant="Variant.Outlined" T="CultureInfo">
+<MudSelect Label=@Localizer["SelectLanguage"] @bind-Value="Culture" Variant="Variant.Outlined" T="CultureInfo">
     <MudSelectItem Value=@_de>
         <img src="https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg" height="14" class="mr-1" alt="Flag of Germany"/> Deutsch
     </MudSelectItem>

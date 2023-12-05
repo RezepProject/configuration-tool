@@ -1,5 +1,3 @@
-using backend.Entities;
-
 namespace ConfigurationTool.Model;
 
 public class Role

@@ -1,20 +1,17 @@
 @page "/admin-page"
-@using backend.Entities
 @using Blazored.LocalStorage
 @using ConfigurationTool.Utils
 @using System.ComponentModel.DataAnnotations
-@using Blazored.LocalStorage
 @using ConfigurationTool.Model
-@using ConfigurationTool.Utils
-@inject IStringLocalizer<ApplicationResource> _localizer
-@inject ILocalStorageService Localstorage;
-@inject NavigationManager NavigationManager;
+@inject IStringLocalizer<ApplicationResource> Localizer
+@inject ILocalStorageService Localstorage
+@inject NavigationManager NavigationManager
 
 <PageTitle>Admin Page</PageTitle>
-<MudText Typo="Typo.h3" GutterBottom="true">@_localizer["AdminPage"]</MudText>
+<MudText Typo="Typo.h3" GutterBottom="true">@Localizer["AdminPage"]</MudText>
 <MudGrid>
     <MudItem xs="12" sm="7">
-        <MudAlert Severity="Severity.Info">@_localizer["AddNewMembers"]</MudAlert>
+        <MudAlert Severity="Severity.Info">@Localizer["AddNewMembers"]</MudAlert>
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@success">
                 <h2>Invite new user</h2>
@@ -34,7 +31,7 @@
                     }
                 </MudSelect>
                 <div class="d-flex align-center justify-space-between" style="margin-top: 2em;">
-                    <MudButton OnClick="@RegisterUser" Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">@_localizer["RegisterUser"]</MudButton>
+                    <MudButton OnClick="@RegisterUser" Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">@Localizer["RegisterUser"]</MudButton>
                 </div>
             </MudForm>
         </MudPaper>
@@ -45,10 +42,10 @@
             <h2 style="margin-bottom: 1em;">Manage current invitations</h2>
             <MudTable Items="invitations" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
                 <HeaderContent>
-                    <MudTh><b>@_localizer["Email"]</b></MudTh>
-                    <MudTh><b>@_localizer["Role"]</b></MudTh>
-                    <MudTh><b>@_localizer["CreatedAt"]</b></MudTh>
-                    <MudTh><b>@_localizer["Actions"]</b></MudTh>
+                    <MudTh><b>@Localizer["Email"]</b></MudTh>
+                    <MudTh><b>@Localizer["Role"]</b></MudTh>
+                    <MudTh><b>@Localizer["CreatedAt"]</b></MudTh>
+                    <MudTh><b>@Localizer["Actions"]</b></MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd>@context.Email</MudTd>
@@ -57,10 +54,10 @@
                     <MudTd>
                         <div class="d-flex pa-4">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="() => ResendInvitation(context.Id)">
-                                @_localizer["Resend"]
+                                @Localizer["Resend"]
                             </MudButton>
                             <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => DeleteInvitation(context.Id)">
-                                @_localizer["Delete"]
+                                @Localizer["Delete"]
                             </MudButton>
                         </div>
                     </MudTd>
@@ -74,11 +71,11 @@
             <h2 style="margin-bottom: 1em;">Manage current users</h2>
             <MudTable Items="@users" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
                 <HeaderContent>
-                    <MudTh><b>@_localizer["Email"]</b></MudTh>
-                    <MudTh><b>@_localizer["Role"]</b></MudTh>
-                    <MudTh><b>@_localizer["FirstName"]</b></MudTh>
-                    <MudTh><b>@_localizer["LastName"]</b></MudTh>
-                    <MudTh><b>@_localizer["Actions"]</b></MudTh>
+                    <MudTh><b>@Localizer["Email"]</b></MudTh>
+                    <MudTh><b>@Localizer["Role"]</b></MudTh>
+                    <MudTh><b>@Localizer["FirstName"]</b></MudTh>
+                    <MudTh><b>@Localizer["LastName"]</b></MudTh>
+                    <MudTh><b>@Localizer["Actions"]</b></MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd>@context.Email</MudTd>
@@ -88,10 +85,10 @@
                     <MudTd>
                         <div class="d-flex pa-4">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="() => OpenEditUser(context.Id)">
-                                @_localizer["ChangeRole"]
+                                @Localizer["ChangeRole"]
                             </MudButton>
                             <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => DeleteUser(context.Id, context.Email)">
-                                @_localizer["Delete"]
+                                @Localizer["Delete"]
                             </MudButton>
                         </div>
                     </MudTd>
@@ -121,6 +118,7 @@
 
         if (userRes == null || invitationRes == null || roleRes == null)
         {
+            await Localstorage.RemoveItemAsync("token");
             NavigationManager.NavigateTo("/login");
             return;
         }
@@ -136,6 +134,8 @@
     {
         var token = await Localstorage.GetItemAsync<string>("token");
         if (token != null) return token;
+
+        await Localstorage.RemoveItemAsync("token");
         NavigationManager.NavigateTo("/login");
         return "";
     }
@@ -181,6 +181,7 @@
 
         if (res is string s && s.Contains("Unauthorized"))
         {
+            await Localstorage.RemoveItemAsync("token");
             NavigationManager.NavigateTo("/login");
             return;
         }
@@ -195,6 +196,7 @@
         var res = await HttpUtils.Post<object>($"configuser/invitation/{id}/resend", null, await CheckJwt());
         if (res is string s && s.Contains("Unauthorized"))
         {
+            await Localstorage.RemoveItemAsync("token");
             NavigationManager.NavigateTo("/login");
             return;
         }
@@ -209,6 +211,7 @@
         var res = await HttpUtils.Delete<object>($"configuser/invitation/{id}", await CheckJwt());
         if (res is string s && s.Contains("Unauthorized"))
         {
+            await Localstorage.RemoveItemAsync("token");
             NavigationManager.NavigateTo("/login");
             return;
         }
