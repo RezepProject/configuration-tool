@@ -5,7 +5,7 @@ namespace ConfigurationTool.Utils;
 
 public static class AuthenticationUtils
 {
-    public static IEnumerable<Claim> ParseClaimsFromJwt(string? jwt)
+    public static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
     {
         var payload = jwt.Split('.')[1];
         var jsonBytes = ParseBase64WithoutPadding(payload);

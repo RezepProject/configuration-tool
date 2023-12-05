@@ -1,28 +1,28 @@
 ﻿@page "/manage-questions"
 @attribute [Authorize]
 <!-- TODO: Add roles here like this attribute [Authorize(Roles = "Admin")] -->
-@inject IStringLocalizer<ApplicationResource> _localizer
+@inject IStringLocalizer<ApplicationResource> Localizer
 
-<PageTitle>@_localizer["QuestionsManagement"]</PageTitle>
-<MudText Typo="Typo.h3" GutterBottom="true">@_localizer["QuestionsManagement"]</MudText>
+<PageTitle>@Localizer["QuestionsManagement"]</PageTitle>
+<MudText Typo="Typo.h3" GutterBottom="true">@Localizer["QuestionsManagement"]</MudText>
 <!-- // TODO: Continue here 26:30 https://www.youtube.com/watch?v=Yh16E2u2pio -->
 <MudGrid>
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@success">
-                <MudTextField T="string" Label=@_localizer["Question"] Required="true" @ref="questionInput"
-                              RequiredError=@_localizer["ErrorTextQuestion"]
+                <MudTextField T="string" Label=@Localizer["Question"] Required="true" @ref="questionInput"
+                              RequiredError=@Localizer["ErrorTextQuestion"]
                               Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
 
-                <MudTextField T="string" Label=@_localizer["Answer"] Required="true" @ref="answerInput"
-                              RequiredError=@_localizer["ErrorTextAnswer"]
+                <MudTextField T="string" Label=@Localizer["Answer"] Required="true" @ref="answerInput"
+                              RequiredError=@Localizer["ErrorTextAnswer"]
                               Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
 
             </MudForm>
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(() => form.Validate())">@_localizer["Submit"]</MudButton>
-            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => form.Reset())">@_localizer["Reset"]</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(() => form.Validate())">@Localizer["Submit"]</MudButton>
+            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => form.Reset())">@Localizer["Reset"]</MudButton>
         </MudPaper>
     </MudItem>
 </MudGrid>
@@ -37,7 +37,7 @@
     private IEnumerable<string> LengthCheck(string input)
     {
         if (input.Length < 10 || string.IsNullOrWhiteSpace(input))
-            yield return @_localizer["ErrorTextInputQuestionManagment"];
+            yield return Localizer["ErrorTextInputQuestionManagment"];
     }
 
 }
