@@ -159,6 +159,15 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to First Name is required!.
+        /// </summary>
+        public static string FirstNameRequired {
+            get {
+                return ResourceManager.GetString("FirstNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hello Welcome to Rezep.
         /// </summary>
         public static string Greating {
@@ -191,6 +200,15 @@ namespace ConfigurationTool.Resources {
         public static string LastName {
             get {
                 return ResourceManager.GetString("LastName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last Name is required!.
+        /// </summary>
+        public static string LastNameRequired {
+            get {
+                return ResourceManager.GetString("LastNameRequired", resourceCulture);
             }
         }
         
@@ -312,15 +330,6 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Password is required!.
-        /// </summary>
-        public static string PasswordRequired {
-            get {
-                return ResourceManager.GetString("PasswordRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Your password is required!.
         /// </summary>
         public static string PasswordRequiredErrorMessage {
@@ -416,6 +425,15 @@ namespace ConfigurationTool.Resources {
         public static string Settings {
             get {
                 return ResourceManager.GetString("Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Password.
+        /// </summary>
+        public static string ShowPassword {
+            get {
+                return ResourceManager.GetString("ShowPassword", resourceCulture);
             }
         }
         
