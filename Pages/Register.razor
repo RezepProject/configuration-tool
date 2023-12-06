@@ -3,27 +3,29 @@
 @using ConfigurationTool.Model
 @using ConfigurationTool.Utils
 @inject NavigationManager NavigationManager
+@inject IStringLocalizer<ApplicationResource> Localizer
 
 <PageTitle>Register</PageTitle>
-<MudText Typo="Typo.h3" GutterBottom="true">Register</MudText>
+<MudText Typo="Typo.h3" GutterBottom="true">@Localizer["Register"]</MudText>
+
 <MudGrid>
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@success">
-                <MudTextField T="string" Label="First name" Required="true" RequiredError="Your first name is required!" @bind-Value="firstName" />
-                <MudTextField T="string" Label="Last name" Required="true" RequiredError="Your last name is required!" @bind-Value="lastName" />
-                <MudTextField @bind-Value="password" Label="Password" HelperText="Choose a strong password"
+                <MudTextField T="string" Label=@Localizer["FirstName"] Required="true" RequiredError=@Localizer["FirstNameRequired"] @bind-Value="firstName" />
+                <MudTextField T="string" Label=@Localizer["LastName"] Required="true" RequiredError=@Localizer["LastNameRequired"] @bind-Value="lastName" />
+                <MudTextField @bind-Value="password" Label=@Localizer["Password"] HelperText=@Localizer["PasswordStrength"]
                               Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))"
-                              RequiredError="Password is required!" Required="true"
+                              RequiredError=@Localizer["PasswordRequiredErrorMessage"] Required="true"
                               Variant="Variant.Text" InputType="@PasswordInput"
                               Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="EyeBtnClick"
-                              AdornmentAriaLabel="Show Password" />
+                              AdornmentAriaLabel=@Localizer["ShowPassword"]/>
                 <MudTextField T="string"
-                              Label="Password" HelperText="Repeat the password" Required="true" InputType="InputType.Password"
+                              Label=@Localizer[""]"Password" HelperText=@Localizer["RepeatPassword"] Required="true" InputType="InputType.Password"
                               Validation="@(new Func<string, string>(PasswordMatch))"/>
                 <div class="d-flex align-center justify-space-between">
-                    <MudCheckBox T="bool" Required="true" RequiredError="You must agree to your TOS!" Label="I agree to the TOS!"/>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="@CreateUser">Register</MudButton>
+                    <MudCheckBox T="bool" Required="true" RequiredError=@Localizer["AgreeToTOS"] Label=@Localizer["IAgreeToTOS"]/>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="@CreateUser">@Localizer["Register"]</MudButton>
                 </div>
             </MudForm>
         </MudPaper>
@@ -63,22 +65,22 @@
     {
         if (string.IsNullOrWhiteSpace(pw))
         {
-            yield return "Password is required!";
+            yield return @Localizer["PasswordRequiredErrorMessage"];
             yield break;
         }
         if (pw.Length < 8)
-            yield return "Password must be at least of length 8";
+            yield return @Localizer["PasswordLength"];
         if (!Regex.IsMatch(pw, @"[A-Z]"))
-            yield return "Password must contain at least one capital letter";
+            yield return @Localizer["PasswordCapitalLetter"];
         if (!Regex.IsMatch(pw, @"[a-z]"))
-            yield return "Password must contain at least one lowercase letter";
+            yield return @Localizer["PasswordLowercaseLetter"];
         if (!Regex.IsMatch(pw, @"[0-9]"))
-            yield return "Password must contain at least one digit";
+            yield return @Localizer["PasswordDigit"];
     }
 
     private string? PasswordMatch(string arg)
     {
-        return password != arg ? "Passwords don't match" : null;
+        return password != arg ? @Localizer["PasswordMatch"] : null;
     }
 
     private async Task CreateUser()
