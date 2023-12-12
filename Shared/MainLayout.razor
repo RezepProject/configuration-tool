@@ -8,7 +8,10 @@
 <MudLayout>
     <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme"/>
     <MudAppBar Elevation="0">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle"/>
+         @if (!NavManager.Uri.EndsWith("/login") || !NavManager.Uri.EndsWith("/register"))
+         {
+             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle"/>
+         }
         <MudSpacer/>
         <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Dark Mode"/>
         <AuthorizeView>
@@ -23,12 +26,18 @@
             </NotAuthorized>
         </AuthorizeView>
     </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
-        <MudDrawerHeader>
-            <MudText Typo="Typo.h6">REZEP</MudText>
-        </MudDrawerHeader>
-        <NavMenu/>
-    </MudDrawer>
+     @if (!NavManager.Uri.EndsWith("/login") || !NavManager.Uri.EndsWith("/register"))
+     {
+         <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
+             <MudDrawerHeader>
+                 <MudText Typo="Typo.h6">REZEP</MudText>
+             </MudDrawerHeader>
+
+
+             <NavMenu/>
+
+         </MudDrawer>
+     }
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Large" Class="my-16 pt-16">
             @Body
@@ -40,6 +49,7 @@
     bool _drawerOpen = true;
     private MudTheme _theme = new();
     private bool idm;
+
     private bool _isDarkMode
     {
         get => idm;
@@ -49,7 +59,7 @@
             ToggleDarkMode();
         }
     }
-    
+
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
