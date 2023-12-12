@@ -21,7 +21,7 @@
                               Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="EyeBtnClick"
                               AdornmentAriaLabel=@Localizer["ShowPassword"]/>
                 <MudTextField T="string"
-                              Label=@Localizer[""]"Password" HelperText=@Localizer["RepeatPassword"] Required="true" InputType="InputType.Password"
+                              Label=@Localizer["Password"] HelperText=@Localizer["RepeatPassword"] Required="true" InputType="InputType.Password"
                               Validation="@(new Func<string, string>(PasswordMatch))"/>
                 <div class="d-flex align-center justify-space-between">
                     <MudCheckBox T="bool" Required="true" RequiredError=@Localizer["AgreeToTOS"] Label=@Localizer["IAgreeToTOS"]/>
