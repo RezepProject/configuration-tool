@@ -1,5 +1,6 @@
 ﻿@page "/manage-questions"
 @using ConfigurationTool.Model
+@using ConfigurationTool.Components
 @attribute [Authorize]
 <!-- TODO: Add roles here like this attribute [Authorize(Roles = "Admin")] -->
 @inject IStringLocalizer<ApplicationResource> Localizer
@@ -31,7 +32,6 @@
             <h1>Count @questions.Count</h1>
             @foreach (var question in questions)
             {
-                <h1> Hello World 1</h1>
                 <QuestionListElement Question="@question"/>
             }
         </MudExpansionPanels>

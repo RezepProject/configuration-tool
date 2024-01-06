@@ -1,47 +1,46 @@
+@namespace ConfigurationTool.Components
 @using ConfigurationTool.Model
-<!-- https://learn.microsoft.com/en-us/dotnet/architecture/blazor-for-web-forms-developers/components-->
-
-<h1>
-    Hello World! in component
-</h1>
 
 <MudExpansionPanel Text=@Question.Text MaxHeight="500">
-                    <MudStack>
-                        <MudItem>
-                            @if (Question.IsEditing)
-                            {
-                                <MudTextField @bind-Value="@Question.Text" />
-                                <MudIconButton Icon="Icons.Material.Filled.Save" OnClick="@( () => SaveQuestion(Question))" />
-                            }
-                            else
-                            {
-                                @Question.Text
-                                <MudIconButton Icon="Icons.Material.Filled.Edit" OnClick="@( () => EditQuestion(Question))" />
-                            }
-                        </MudItem>
-                        @foreach (var answer in Question.Answers)
-                        {
-                            <MudItem>
-                                @if (answer.IsEditing)
-                                {
-                                    <MudTextField @bind-Value="@answer.Text" />
-                                    <MudIconButton Icon="Icons.Material.Filled.Save" OnClick="@( () => SaveAnswer(answer))" />
-                                }
-                                else
-                                {
-                                    @answer.Text
-                                    <MudIconButton Icon="Icons.Material.Filled.Edit" OnClick="@( () => EditAnswer(answer))" />
-                                }
-                            </MudItem>
-                        }
-                    </MudStack>
-                </MudExpansionPanel>
+    <MudStack>
+        <MudItem>Question:</MudItem>
+        <MudItem Class="d-flex">
+            @if (Question.IsEditing)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="@(() => SaveQuestion(Question))"/>
+                <MudTextField @bind-Value="@Question.Text"/>
+            }
+            else
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditQuestion(Question))"/>
+                <MudText Style="font-size: 120%; margin-top: 16px">@Question.Text</MudText>
+            }
+        </MudItem>
+        <MudItem>
+            Answers:
+        </MudItem>
+        @foreach (var answer in Question.Answers)
+        {
+            <MudItem Class="d-flex">
+                @if (answer.IsEditing)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="@(() => SaveAnswer(answer))"/>
+                    <MudTextField @bind-Value="@answer.Text"/>
+                }
+                else
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => EditAnswer(answer))"/>
+                    <MudText Style="font-size: 120%; margin-top: 16px">@answer.Text</MudText>
+                }
+            </MudItem>
+        }
+    </MudStack>
+</MudExpansionPanel>
 
 
 @code{
-    [Parameter]
-    public Question Question{ get; set; }
-    
+    [Parameter] public Question Question { get; set; }
+
     void EditQuestion(Question question)
     {
         question.IsEditing = true;
@@ -61,4 +60,5 @@
     {
         answer.IsEditing = false;
     }
+
 }
