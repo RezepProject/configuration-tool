@@ -34,19 +34,29 @@
                 }
             </MudItem>
         }
+        <MudItem>
+            New Answer:
+        </MudItem>
+        <MudItem Class="d-flex">
+            <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary"/>
+            <MudTextField @bind-Value="NewAnswer"/>
+        </MudItem>
     </MudStack>
 </MudExpansionPanel>
 
 
 @code{
-    [Parameter] public Question Question { get; set; }
+    [Parameter] 
+    public Question Question { get; set; }
 
-    void EditQuestion(Question question)
+    string NewAnswer { get; set; } = "";
+
+    void EditQuestion(Question? question)
     {
         question.IsEditing = true;
     }
 
-    void SaveQuestion(Question question)
+    void SaveQuestion(Question? question)
     {
         question.IsEditing = false;
     }
@@ -60,5 +70,9 @@
     {
         answer.IsEditing = false;
     }
-
+    void AddAnswer()
+    {
+        Question.Answers?.Add(new Answer { Text = NewAnswer });
+        NewAnswer = "";
+    }
 }

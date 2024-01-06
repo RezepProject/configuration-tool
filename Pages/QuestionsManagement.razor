@@ -9,6 +9,7 @@
 <MudText Typo="Typo.h3" GutterBottom="true">@Localizer["QuestionsManagement"]</MudText>
 <MudGrid>
     <MudItem xs="12" sm="7">
+        <MudText Typo="Typo.h5" GutterBottom="true">Add question</MudText>
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@success">
                 <MudTextField T="string" Label=@Localizer["Question"] Required="true" @ref="questionInput"
@@ -28,8 +29,8 @@
     </MudItem>
     
     <MudItem xs="12" sm="7">
+        <MudText Typo="Typo.h5" GutterBottom="true">Questions</MudText>
         <MudExpansionPanels>
-            <h1>Count @questions.Count</h1>
             @foreach (var question in questions)
             {
                 <QuestionListElement Question="@question"/>
