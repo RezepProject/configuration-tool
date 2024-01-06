@@ -1,9 +1,64 @@
 @using ConfigurationTool.Model
 <!-- https://learn.microsoft.com/en-us/dotnet/architecture/blazor-for-web-forms-developers/components-->
 
+<h1>
+    Hello World! in component
+</h1>
+
+<MudExpansionPanel Text=@Question.Text MaxHeight="500">
+                    <MudStack>
+                        <MudItem>
+                            @if (Question.IsEditing)
+                            {
+                                <MudTextField @bind-Value="@Question.Text" />
+                                <MudIconButton Icon="Icons.Material.Filled.Save" OnClick="@( () => SaveQuestion(Question))" />
+                            }
+                            else
+                            {
+                                @Question.Text
+                                <MudIconButton Icon="Icons.Material.Filled.Edit" OnClick="@( () => EditQuestion(Question))" />
+                            }
+                        </MudItem>
+                        @foreach (var answer in Question.Answers)
+                        {
+                            <MudItem>
+                                @if (answer.IsEditing)
+                                {
+                                    <MudTextField @bind-Value="@answer.Text" />
+                                    <MudIconButton Icon="Icons.Material.Filled.Save" OnClick="@( () => SaveAnswer(answer))" />
+                                }
+                                else
+                                {
+                                    @answer.Text
+                                    <MudIconButton Icon="Icons.Material.Filled.Edit" OnClick="@( () => EditAnswer(answer))" />
+                                }
+                            </MudItem>
+                        }
+                    </MudStack>
+                </MudExpansionPanel>
 
 
 @code{
     [Parameter]
-    Question Question{ get; set; }
+    public Question Question{ get; set; }
+    
+    void EditQuestion(Question question)
+    {
+        question.IsEditing = true;
+    }
+
+    void SaveQuestion(Question question)
+    {
+        question.IsEditing = false;
+    }
+
+    void EditAnswer(Answer answer)
+    {
+        answer.IsEditing = true;
+    }
+
+    void SaveAnswer(Answer answer)
+    {
+        answer.IsEditing = false;
+    }
 }

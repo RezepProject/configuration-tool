@@ -7,6 +7,7 @@ public class Answer
     public string User { get; set; }
     public int QuestionId { get; set; }
     public Question? Question { get; set; }
+    public bool IsEditing { get; set; } = false;
 }
 
 public class CreateAnswer

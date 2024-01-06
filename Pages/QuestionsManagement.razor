@@ -6,7 +6,6 @@
 
 <PageTitle>@Localizer["QuestionsManagement"]</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">@Localizer["QuestionsManagement"]</MudText>
-<!-- // TODO: Continue here 26:30 https://www.youtube.com/watch?v=Yh16E2u2pio -->
 <MudGrid>
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
@@ -26,6 +25,17 @@
             <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => form.Reset())">@Localizer["Reset"]</MudButton>
         </MudPaper>
     </MudItem>
+    
+    <MudItem xs="12" sm="7">
+        <MudExpansionPanels>
+            <h1>Count @questions.Count</h1>
+            @foreach (var question in questions)
+            {
+                <h1> Hello World 1</h1>
+                <QuestionListElement Question="@question"/>
+            }
+        </MudExpansionPanels>
+    </MudItem>
 </MudGrid>
 
 
@@ -34,7 +44,23 @@
     MudTextField<string> questionInput;
     MudTextField<string> answerInput;
     MudForm form;
-    List<Question> questions = new List<Question>();
+    List<Question> questions = new()
+    {
+        new Question
+        {
+            Id = 1,
+            Text = "What is the meaning of life?",
+            Answers = new List<Answer>
+            {
+                new()
+                {
+                    Id = 1,
+                    Text = "42"
+                }
+            }
+        }
+    };
+    
 
     private IEnumerable<string> LengthCheck(string input)
     {
