@@ -10,7 +10,7 @@
 <PageTitle>Admin Page</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">@Localizer["AdminPage"]</MudText>
 <MudGrid>
-    <MudItem xs="12" sm="7">
+    <MudItem xs="12" sm="12">
         <MudAlert Severity="Severity.Info">@Localizer["AddNewMembers"]</MudAlert>
         <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@success">
@@ -36,7 +36,7 @@
             </MudForm>
         </MudPaper>
     </MudItem>
-    <MudItem xs="12" sm="7">
+    <MudItem xs="12" sm="12">
         <MudAlert Severity="Severity.Info">Here you can manage current invitations.</MudAlert>
         <MudPaper Class="pa-4">
             <h2 style="margin-bottom: 1em;">Manage current invitations</h2>
@@ -65,7 +65,7 @@
             </MudTable>
         </MudPaper>
     </MudItem>
-    <MudItem xs="12" sm="7">
+    <MudItem xs="12" sm="12">
         <MudAlert Severity="Severity.Info">Here you can manage current users.</MudAlert>
         <MudPaper Class="pa-4">
             <h2 style="margin-bottom: 1em;">Manage current users</h2>
@@ -84,9 +84,23 @@
                     <MudTd>@context.LastName</MudTd>
                     <MudTd>
                         <div class="d-flex pa-4">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="() => OpenEditUser(context.Id)">
-                                @Localizer["ChangeRole"]
-                            </MudButton>
+                            <MudSelect Style="margin-right: 2em;" T="string" Label="Role"
+                                       Disabled="@(context.Email == userEmail)"
+                                       Value="@roles.Find(r => r.Id == context.RoleId)!.Name"
+                                       ValueChanged="() => ChangeRole(context.Id)" AnchorOrigin="Origin.BottomCenter"
+                                       @ref="roleChange">
+                                @if (roles.Count == 0)
+                                {
+                                    <MudSelectItem Value="@("No roles available")"/>
+                                }
+                                else
+                                {
+                                    foreach (var r in roles)
+                                    {
+                                        <MudSelectItem Value="@(r.Name)"/>
+                                    }
+                                }
+                            </MudSelect>
                             <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => DeleteUser(context.Id, context.Email)">
                                 @Localizer["Delete"]
                             </MudButton>
@@ -108,6 +122,8 @@
     List<Invitation> invitations = new List<Invitation>();
     MudTextField<string> email;
     MudSelect<string> role;
+    MudSelect<string> roleChange;
+    string userEmail = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -127,6 +143,8 @@
         users = userRes;
         invitations = invitationRes;
 
+        userEmail = await Localstorage.GetItemAsync<string>("email");
+
         await base.OnInitializedAsync();
     }
 
@@ -138,6 +156,24 @@
         await Localstorage.RemoveItemAsync("token");
         NavigationManager.NavigateTo("/login");
         return "";
+    }
+
+    private async Task ChangeRole(int id)
+    {
+        var user = users.FirstOrDefault(u => u.Id == id);
+        if (user == null) return;
+
+        var role = roles.FirstOrDefault(r => r.Name == roleChange.Value);
+        if (role == null) return;
+
+        user.RoleId = role.Id;
+        var res = await HttpUtils.Put<object>($"configuser/{id}", user, await CheckJwt());
+
+        if (res is string s && s.Contains("Unauthorized"))
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
     }
 
     private async Task RegisterUser()
@@ -160,11 +196,6 @@
     }
 
     private async Task OpenEditUser(int id)
-    {
-        // TODO
-    }
-
-    private async Task ChangeRole(int id)
     {
         // TODO
     }
