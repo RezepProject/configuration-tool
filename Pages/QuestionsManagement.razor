@@ -1,6 +1,11 @@
 ﻿@page "/manage-questions"
 @using ConfigurationTool.Model
 @using ConfigurationTool.Components
+@using ConfigurationTool.Utils
+@using Blazored.LocalStorage
+@inject ILocalStorageService Localstorage
+@inject NavigationManager NavigationManager
+
 @attribute [Authorize]
 <!-- TODO: Add roles here like this attribute [Authorize(Roles = "Admin")] -->
 @inject IStringLocalizer<ApplicationResource> Localizer
@@ -23,7 +28,7 @@
             </MudForm>
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(() => form.Validate())">@Localizer["Submit"]</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@AddQuestion">@Localizer["Submit"]</MudButton>
             <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => form.Reset())">@Localizer["Reset"]</MudButton>
         </MudPaper>
     </MudItem>
@@ -45,7 +50,7 @@
     MudTextField<string> questionInput;
     MudTextField<string> answerInput;
     MudForm form;
-    List<Question> questions = new()
+    List<Question>? questions = new()
     {
         new Question
         {
@@ -62,11 +67,53 @@
         }
     };
     
+    private async Task AddQuestion()
+    {
+        var newQuestion = new CreateQuestion()
+        {
+            Text = questionInput.Value,
+            Answers = new List<CreateAnswer>
+            {
+                new() { Text = answerInput.Value, User = "NOT IMPLEMENTED"}
+            }
+        };
+        
+        var res = await HttpUtils.Post<object>("question", newQuestion, await CheckJwt());
+        Console.WriteLine(res);
+        if (res is string s && s.Contains("Unauthorized"))
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+        
+        form.Reset();
+        questions = await GetQuestions(await CheckJwt());
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var jwt = await CheckJwt();
+        questions = await GetQuestions(jwt);
+    }
+    
+    private async Task<List<Question>?> GetQuestions(String jwt)
+    {
+        return await HttpUtils.Get<List<Question>>("question", jwt);
+    }
 
     private IEnumerable<string> LengthCheck(string input)
     {
         if (input.Length < 10 || string.IsNullOrWhiteSpace(input))
-            yield return Localizer["ErrorTextInputQuestionManagment"];
+            yield return Localizer["ErrorTextInputQuestionManagement"];
     }
 
+    async Task<string> CheckJwt()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+        if (token != null) return token;
+
+        await Localstorage.RemoveItemAsync("token");
+        NavigationManager.NavigateTo("/login");
+        return "";
+    }
 }
