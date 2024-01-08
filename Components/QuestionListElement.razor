@@ -1,5 +1,9 @@
 @namespace ConfigurationTool.Components
 @using ConfigurationTool.Model
+@using ConfigurationTool.Utils
+@using Blazored.LocalStorage
+@inject ILocalStorageService Localstorage
+@inject NavigationManager NavigationManager
 
 <MudExpansionPanel Text=@Question.Text MaxHeight="500">
     <MudStack>
@@ -51,14 +55,30 @@
 
     string NewAnswer { get; set; } = "";
 
+    async Task<string> CheckJwt()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+        if (token != null) return token;
+
+        await Localstorage.RemoveItemAsync("token");
+        NavigationManager.NavigateTo("/login");
+        return "";
+    }
+
     void EditQuestion(Question? question)
     {
         question.IsEditing = true;
     }
 
-    void SaveQuestion(Question? question)
+    async void SaveQuestion(Question? question)
     {
         question.IsEditing = false;
+        var res = await HttpUtils.Put<object>($"question/{question.Id}", question, await CheckJwt());
+        if (res is string s && s.Contains("Unauthorized"))
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
     }
 
     void EditAnswer(Answer answer)
@@ -66,9 +86,15 @@
         answer.IsEditing = true;
     }
 
-    void SaveAnswer(Answer answer)
+    async void SaveAnswer(Answer answer)
     {
         answer.IsEditing = false;
+        var res = await HttpUtils.Put<object>($"answer/{answer.Id}", answer, await CheckJwt());
+        if (res is string s && s.Contains("Unauthorized"))
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
     }
     void AddAnswer()
     {
