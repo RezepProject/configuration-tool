@@ -4,6 +4,7 @@
 @using Blazored.LocalStorage
 @inject ILocalStorageService Localstorage
 @inject NavigationManager NavigationManager
+@inject IStringLocalizer<ApplicationResource> Localizer
 
 <MudExpansionPanel Text=@Question.Text MaxHeight="500">
     <MudStack>
@@ -12,7 +13,9 @@
             @if (Question.IsEditing)
             {
                 <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="@(() => SaveQuestion(Question))"/>
-                <MudTextField @bind-Value="@Question.Text"/>
+                <MudTextField @bind-Value="@Question.Text"
+                              RequiredError=@Localizer["ErrorTextQuestion"]
+                              Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
             }
             else
             {
@@ -29,7 +32,9 @@
                 @if (answer.IsEditing)
                 {
                     <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="@(() => SaveAnswer(answer))"/>
-                    <MudTextField @bind-Value="@answer.Text"/>
+                    <MudTextField @bind-Value="@answer.Text"
+                                  RequiredError=@Localizer["ErrorTextQuestion"]
+                                  Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
                 }
                 else
                 {
@@ -43,15 +48,16 @@
         </MudItem>
         <MudItem Class="d-flex">
             <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="@(() => AddAnswer())" Color="Color.Primary"/>
-            <MudTextField @bind-Value="NewAnswer"/>
+            <MudTextField @bind-Value="NewAnswer"
+                          RequiredError=@Localizer["ErrorTextQuestion"]
+                          Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
         </MudItem>
     </MudStack>
 </MudExpansionPanel>
 
 
 @code{
-    [Parameter] 
-    public Question Question { get; set; }
+    [Parameter] public Question Question { get; set; }
 
     string NewAnswer { get; set; } = "";
 
@@ -62,6 +68,11 @@
 
     void SaveQuestion(Question? question)
     {
+        if (string.IsNullOrWhiteSpace(question?.Text))
+        {
+            return;
+        }
+
         question.IsEditing = false;
     }
 
@@ -72,16 +83,25 @@
 
     void SaveAnswer(Answer answer)
     {
+        if (string.IsNullOrWhiteSpace(answer.Text))
+        {
+            return;
+        }
+
         answer.IsEditing = false;
     }
 
     async Task AddAnswer()
     {
+        if (string.IsNullOrWhiteSpace(NewAnswer))
+        {
+            return;
+        }
         Question.Answers?.Add(new Answer { Text = NewAnswer });
         NewAnswer = "";
         await HttpUtils.Put<Question>(Question.Id.ToString(), Question, await CheckJwt());
     }
-    
+
     async Task<string> CheckJwt()
     {
         var token = await Localstorage.GetItemAsync<string>("token");
@@ -91,4 +111,11 @@
         NavigationManager.NavigateTo("/login");
         return "";
     }
+
+    private IEnumerable<string> LengthCheck(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+            yield return "Please enter a value";
+    }
+
 }

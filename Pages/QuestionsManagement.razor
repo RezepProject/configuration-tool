@@ -50,22 +50,7 @@
     MudTextField<string> questionInput;
     MudTextField<string> answerInput;
     MudForm form;
-    List<Question>? questions = new()
-    {
-        new Question
-        {
-            Id = 1,
-            Text = "What is the meaning of life?",
-            Answers = new List<Answer>
-            {
-                new()
-                {
-                    Id = 1,
-                    Text = "42"
-                }
-            }
-        }
-    };
+    List<Question>? questions = new();
     
     private async Task AddQuestion()
     {
@@ -104,7 +89,7 @@
     private IEnumerable<string> LengthCheck(string input)
     {
         if (string.IsNullOrWhiteSpace(input))
-            yield return Localizer["ErrorTextInputQuestionManagement"];
+            yield return "Please enter a value";
     }
 
     async Task<string> CheckJwt()
