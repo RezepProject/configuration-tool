@@ -21,9 +21,17 @@
                               RequiredError=@Localizer["ErrorTextQuestion"]
                               Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
 
+                @foreach(var answer in answersInput)
+                {
+                    <MudTextField T="string" Label=@Localizer["Answer"] Required="true"
+                                  RequiredError=@Localizer["ErrorTextAnswer"]
+                                  Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
+                }
+
                 <MudTextField T="string" Label=@Localizer["Answer"] Required="true" @ref="answerInput"
                               RequiredError=@Localizer["ErrorTextAnswer"]
-                              Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
+                              Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"
+                              ValueChanged="() => answersInput.Add(answerInput)"/>
 
             </MudForm>
         </MudPaper>
@@ -49,6 +57,7 @@
     bool success;
     MudTextField<string> questionInput;
     MudTextField<string> answerInput;
+    List<MudTextField<string>> answersInput = new List<MudTextField<string>>();
     MudForm form;
     List<Question>? questions = new();
     
@@ -78,7 +87,15 @@
     protected override async Task OnInitializedAsync()
     {
         var jwt = await CheckJwt();
-        questions = await GetQuestions(jwt);
+        var newQuestions = await GetQuestions(jwt);
+
+        if (newQuestions == null)
+        {
+            await Localstorage.RemoveItemAsync("token");
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+        questions = newQuestions;
     }
     
     private async Task<List<Question>?> GetQuestions(String jwt)
