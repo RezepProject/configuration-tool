@@ -34,7 +34,7 @@
             <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => AddAnswer())">@Localizer["Add Answer"]</MudButton>
         </MudPaper>
     </MudItem>
-
+    
     <MudItem xs="12" sm="7">
         <MudText Typo="Typo.h5" GutterBottom="true">Questions</MudText>
         <MudExpansionPanels>
@@ -50,26 +50,9 @@
 @code {
     bool success;
     MudTextField<string> questionInput;
-    MudTextField<string> answerInput;
     MudForm form;
     List<MudTextField<string>> answers = new() { new MudTextField<string>() };
-
-    List<Question>? questions = new()
-    {
-        new Question
-        {
-            Id = 1,
-            Text = "What is the meaning of life?",
-            Answers = new List<Answer>
-            {
-                new()
-                {
-                    Id = 1,
-                    Text = "42"
-                }
-            }
-        }
-    };
+    List<Question>? questions = new();
 
     private void AddAnswer()
     {
@@ -88,7 +71,7 @@
             Answers = answers.Where(a => a.Value != null && !string.IsNullOrEmpty(a.Value.Trim())).Select(a =>
                 new CreateAnswer { Text = a.Value, User = "NOT IMPLEMENTED"}).ToList()
         };
-
+        
         var res = await HttpUtils.Post<object>("question", newQuestion, await CheckJwt());
         Console.WriteLine(res);
         if (res is string s && s.Contains("Unauthorized"))
@@ -96,11 +79,11 @@
             NavigationManager.NavigateTo("/login");
             return;
         }
-
+        
         form.Reset();
         questions = await GetQuestions(await CheckJwt());
     }
-
+    
     protected override async Task OnInitializedAsync()
     {
         var jwt = await CheckJwt();
@@ -112,10 +95,9 @@
             NavigationManager.NavigateTo("/login");
             return;
         }
-
         questions = newQuestions;
     }
-
+    
     private async Task<List<Question>?> GetQuestions(String jwt)
     {
         return await HttpUtils.Get<List<Question>>("question", jwt);
@@ -124,7 +106,7 @@
     private IEnumerable<string> LengthCheck(string input)
     {
         if (string.IsNullOrWhiteSpace(input))
-            yield return Localizer["ErrorTextInputQuestionManagement"];
+            yield return "Please enter a value";
     }
 
     async Task<string> CheckJwt()
@@ -136,5 +118,4 @@
         NavigationManager.NavigateTo("/login");
         return "";
     }
-
 }
