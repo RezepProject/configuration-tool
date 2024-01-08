@@ -119,7 +119,7 @@
 
     private IEnumerable<string> LengthCheck(string input)
     {
-        if (input.Length < 10 || string.IsNullOrWhiteSpace(input))
+        if (string.IsNullOrWhiteSpace(input))
             yield return Localizer["ErrorTextInputQuestionManagement"];
     }
 

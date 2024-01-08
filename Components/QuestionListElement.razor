@@ -42,7 +42,7 @@
             New Answer:
         </MudItem>
         <MudItem Class="d-flex">
-            <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="@(() => AddAnswer())" Color="Color.Primary"/>
             <MudTextField @bind-Value="NewAnswer"/>
         </MudItem>
     </MudStack>
@@ -96,9 +96,21 @@
             return;
         }
     }
-    void AddAnswer()
+
+    async Task AddAnswer()
     {
         Question.Answers?.Add(new Answer { Text = NewAnswer });
         NewAnswer = "";
+        await HttpUtils.Put<Question>(Question.Id.ToString(), Question, await CheckJwt());
+    }
+    
+    async Task<string> CheckJwt()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+        if (token != null) return token;
+
+        await Localstorage.RemoveItemAsync("token");
+        NavigationManager.NavigateTo("/login");
+        return "";
     }
 }
