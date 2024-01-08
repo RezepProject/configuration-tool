@@ -23,7 +23,9 @@
 
                 @foreach(var answer in answersInput)
                 {
-
+                    <MudTextField T="string" Label=@Localizer["Answer"] Required="true"
+                                  RequiredError=@Localizer["ErrorTextAnswer"]
+                                  Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
                 }
                 )
 
