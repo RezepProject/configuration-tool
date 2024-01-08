@@ -21,26 +21,20 @@
                               RequiredError=@Localizer["ErrorTextQuestion"]
                               Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
 
-                @foreach(var answer in answersInput)
+                @foreach (var answer in answers)
                 {
-                    <MudTextField T="string" Label=@Localizer["Answer"] Required="true"
-                                  RequiredError=@Localizer["ErrorTextAnswer"]
-                                  Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
+                    <MudTextField T="string" Label=@Localizer["Answer"] @ref="answers[answers.IndexOf(answer)]" />
                 }
-
-                <MudTextField T="string" Label=@Localizer["Answer"] Required="true" @ref="answerInput"
-                              RequiredError=@Localizer["ErrorTextAnswer"]
-                              Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"
-                              ValueChanged="() => answersInput.Add(answerInput)"/>
 
             </MudForm>
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@AddQuestion">@Localizer["Submit"]</MudButton>
             <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => form.Reset())">@Localizer["Reset"]</MudButton>
+            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => AddAnswer())">@Localizer["Add Answer"]</MudButton>
         </MudPaper>
     </MudItem>
-    
+
     <MudItem xs="12" sm="7">
         <MudText Typo="Typo.h5" GutterBottom="true">Questions</MudText>
         <MudExpansionPanels>
@@ -57,8 +51,9 @@
     bool success;
     MudTextField<string> questionInput;
     MudTextField<string> answerInput;
-    List<MudTextField<string>> answersInput = new List<MudTextField<string>>();
     MudForm form;
+    List<MudTextField<string>> answers = new() { new MudTextField<string>() };
+
     List<Question>? questions = new()
     {
         new Question
@@ -75,18 +70,25 @@
             }
         }
     };
-    
+
+    private void AddAnswer()
+    {
+        if (!answers.Any(a => a.Value == null || string.IsNullOrEmpty(a.Value.Trim())))
+        {
+            answers.Add(new MudTextField<string>());
+            StateHasChanged();
+        }
+    }
+
     private async Task AddQuestion()
     {
         var newQuestion = new CreateQuestion()
         {
             Text = questionInput.Value,
-            Answers = new List<CreateAnswer>
-            {
-                new() { Text = answerInput.Value, User = "NOT IMPLEMENTED"}
-            }
+            Answers = answers.Where(a => a.Value != null && !string.IsNullOrEmpty(a.Value.Trim())).Select(a =>
+                new CreateAnswer { Text = a.Value, User = "NOT IMPLEMENTED"}).ToList()
         };
-        
+
         var res = await HttpUtils.Post<object>("question", newQuestion, await CheckJwt());
         Console.WriteLine(res);
         if (res is string s && s.Contains("Unauthorized"))
@@ -94,11 +96,11 @@
             NavigationManager.NavigateTo("/login");
             return;
         }
-        
+
         form.Reset();
         questions = await GetQuestions(await CheckJwt());
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
         var jwt = await CheckJwt();
@@ -110,9 +112,10 @@
             NavigationManager.NavigateTo("/login");
             return;
         }
+
         questions = newQuestions;
     }
-    
+
     private async Task<List<Question>?> GetQuestions(String jwt)
     {
         return await HttpUtils.Get<List<Question>>("question", jwt);
@@ -133,4 +136,5 @@
         NavigationManager.NavigateTo("/login");
         return "";
     }
+
 }
