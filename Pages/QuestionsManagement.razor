@@ -27,7 +27,6 @@
                                   RequiredError=@Localizer["ErrorTextAnswer"]
                                   Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
                 }
-                )
 
                 <MudTextField T="string" Label=@Localizer["Answer"] Required="true" @ref="answerInput"
                               RequiredError=@Localizer["ErrorTextAnswer"]
@@ -58,7 +57,7 @@
     bool success;
     MudTextField<string> questionInput;
     MudTextField<string> answerInput;
-    List<MudTextField<string>> answersInput;
+    List<MudTextField<string>> answersInput = new List<MudTextField<string>>();
     MudForm form;
     List<Question>? questions = new()
     {
