@@ -118,6 +118,7 @@
 
         if (userRes == null || invitationRes == null || roleRes == null)
         {
+            await AuthenticationUtils.RefreshToken(jwt);
             await Localstorage.RemoveItemAsync("token");
             NavigationManager.NavigateTo("/login");
             return;
@@ -134,7 +135,7 @@
     {
         var token = await Localstorage.GetItemAsync<string>("token");
         if (token != null) return token;
-
+        
         await Localstorage.RemoveItemAsync("token");
         NavigationManager.NavigateTo("/login");
         return "";
@@ -151,6 +152,8 @@
         Console.WriteLine(res);
         if (res is string s && s.Contains("Unauthorized"))
         {
+            await AuthenticationUtils.RefreshToken(await CheckJwt());
+            await Localstorage.RemoveItemAsync("token");
             NavigationManager.NavigateTo("/login");
             return;
         }
@@ -181,6 +184,7 @@
 
         if (res is string s && s.Contains("Unauthorized"))
         {
+            await AuthenticationUtils.RefreshToken(await CheckJwt());
             await Localstorage.RemoveItemAsync("token");
             NavigationManager.NavigateTo("/login");
             return;
@@ -196,6 +200,7 @@
         var res = await HttpUtils.Post<object>($"configuser/invitation/{id}/resend", null, await CheckJwt());
         if (res is string s && s.Contains("Unauthorized"))
         {
+            await AuthenticationUtils.RefreshToken(await CheckJwt());
             await Localstorage.RemoveItemAsync("token");
             NavigationManager.NavigateTo("/login");
             return;
@@ -211,6 +216,7 @@
         var res = await HttpUtils.Delete<object>($"configuser/invitation/{id}", await CheckJwt());
         if (res is string s && s.Contains("Unauthorized"))
         {
+            await AuthenticationUtils.RefreshToken(await CheckJwt());
             await Localstorage.RemoveItemAsync("token");
             NavigationManager.NavigateTo("/login");
             return;
