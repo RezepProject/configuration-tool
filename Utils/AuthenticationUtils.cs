@@ -22,4 +22,11 @@ public static class AuthenticationUtils
         }
         return Convert.FromBase64String(base64);
     }
+
+    public static async Task<string> RefreshToken(string jwt)
+    {
+        var identity = new ClaimsIdentity(ParseClaimsFromJwt(jwt), "jwt");
+        var id = identity.FindFirst(claim => claim.Type == "sid")?.ToString();
+        return await HttpUtils.Post<string>($"authentication/refresh-token/{id}", null, jwt);
+    }
 }
