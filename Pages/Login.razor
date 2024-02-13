@@ -37,6 +37,7 @@
                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto" OnClick="HandleLogin">Login</MudButton>
                        </div>
                    </MudForm>
+                   <MudButton Variant="Variant.Text" Color="Color.Secondary" Class="ml-auto" OnClick='() => Navigation.NavigateTo("/forgot-password")'>Forgot Password?</MudButton>
                </MudPaper>
             </NotAuthorized>
         </AuthorizeView>

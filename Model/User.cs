@@ -32,3 +32,9 @@ public class NewUser
     public string Password { get; set; }
     public string Token { get; set; }
 }
+
+public class ChangePasswordToken
+{
+    public Guid Token { get; set; }
+    public string NewPassword { get; set; }
+}
