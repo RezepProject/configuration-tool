@@ -8,11 +8,16 @@
 
 	<ItemGroup>
 		<PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
+		<PackageReference Include="bunit" Version="1.26.64" />
+		<PackageReference Include="bunit.core" Version="1.26.64" />
+		<PackageReference Include="bunit.web" Version="1.26.64" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.25" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.7" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.26" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.7" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
 		<PackageReference Include="MudBlazor" Version="6.0.13" />
+		<PackageReference Include="xunit" Version="2.7.0" />
 	</ItemGroup>
 
 	<ItemGroup>

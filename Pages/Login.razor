@@ -7,6 +7,8 @@
 @inject NavigationManager Navigation
 @inject IStringLocalizer<ApplicationResource> Localizer
 
+@using ConfigurationTool.Test
+<HelloWorld></HelloWorld>
 <PageTitle>Login</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">Login</MudText>
 <MudGrid>
@@ -24,24 +26,25 @@
                 </MudPaper>
             </Authorized>
             <NotAuthorized>
-               <MudPaper Class="pa-4">
-                   <MudForm @bind-IsValid="@_success" @ref="_form">
-                       <MudTextField T="string" Label="Email" Required="true" @bind-Value="id" RequiredError=@Localizer["EmailRequired"]/>
-                       <MudTextField @bind-Value="password" Label=@Localizer["Password"]
-                                     RequiredError=@Localizer["PasswordRequired"] Required="true"
-                                     Variant="Variant.Text" InputType="@PasswordInput"
-                                     Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="EyeBtnClick"
-                                     AdornmentAriaLabel="Show Password" />
+                <MudPaper Class="pa-4">
+                    <MudForm @bind-IsValid="@_success" @ref="_form">
+                        <MudTextField T="string" Label="Email" Required="true" @bind-Value="id" RequiredError=@Localizer["EmailRequired"]/>
+                        <MudTextField @bind-Value="password" Label=@Localizer["Password"]
+                                      RequiredError=@Localizer["PasswordRequired"] Required="true"
+                                      Variant="Variant.Text" InputType="@PasswordInput"
+                                      Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="EyeBtnClick"
+                                      AdornmentAriaLabel="Show Password" />
 
-                       <div class="d-flex align-center justify-space-between mt-4">
-                           <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto" OnClick="HandleLogin">Login</MudButton>
-                       </div>
-                   </MudForm>
-               </MudPaper>
+                        <div class="d-flex align-center justify-space-between mt-4">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto" OnClick="HandleLogin">Login</MudButton>
+                        </div>
+                    </MudForm>
+                </MudPaper>
             </NotAuthorized>
         </AuthorizeView>
     </MudItem>
 </MudGrid>
+
 
 @code {
     bool _success;
