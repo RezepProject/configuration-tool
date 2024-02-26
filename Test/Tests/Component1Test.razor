@@ -1,0 +1,11 @@
+﻿@using ConfigurationTool.Components
+@inherits TestContext
+@code {
+
+    [Fact]
+    public void HasParagraph()
+    {
+        var cut = Render(@<Component1/>);
+        cut.MarkupMatches(@<p>Component1</p>);
+    }
+}

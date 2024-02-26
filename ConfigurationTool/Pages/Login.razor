@@ -1,0 +1,100 @@
+@page "/login"
+@using ConfigurationTool.Model
+@using ConfigurationTool.Utils
+@using Blazored.LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService Localstorage
+@inject NavigationManager Navigation
+@inject IStringLocalizer<ApplicationResource> Localizer
+
+<PageTitle>Login</PageTitle>
+<MudText Typo="Typo.h3" GutterBottom="true">Login</MudText>
+<MudGrid>
+    <MudItem xs="12" sm="7" gap-y-4>
+        <AuthorizeView>
+            <Authorized>
+                <MudPaper Class="pa-4">
+                    <MudForm @bind-IsValid="@_success" @ref="_form">
+                        <h2>Are you sure you want to log out?</h2>
+                        <div style="margin-top: 1em">
+                            <MudButton Variant="Variant.Filled" Color="Color.Info" Class="ml-auto" OnClick='() => Navigation.NavigateTo("/")'>Cancel</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@LogOut">Logout</MudButton>
+                        </div>
+                    </MudForm>
+                </MudPaper>
+            </Authorized>
+            <NotAuthorized>
+                <MudPaper Class="pa-4">
+                    <MudForm @bind-IsValid="@_success" @ref="_form">
+                        <MudTextField T="string" Label="Email" Required="true" @bind-Value="id" RequiredError=@Localizer["EmailRequired"]/>
+                        <MudTextField @bind-Value="password" Label=@Localizer["Password"]
+                                      RequiredError=@Localizer["PasswordRequired"] Required="true"
+                                      Variant="Variant.Text" InputType="@PasswordInput"
+                                      Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="EyeBtnClick"
+                                      AdornmentAriaLabel="Show Password" />
+
+                        <div class="d-flex align-center justify-space-between mt-4">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto" OnClick="HandleLogin">Login</MudButton>
+                        </div>
+                    </MudForm>
+                </MudPaper>
+            </NotAuthorized>
+        </AuthorizeView>
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    bool _success;
+    MudForm _form;
+    string password;
+    string id;
+
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    void EyeBtnClick()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+
+    public void LogOut()
+    {
+        Localstorage.RemoveItemAsync("token");
+        Navigation.NavigateTo("/login", true);
+    }
+
+    async Task HandleLogin()
+    {
+        var user = new UserLoginDto
+        {
+            UserIdentificator = id,
+            Password = password
+        };
+
+        var token = await HttpUtils.Post<string>("authentication", user);
+
+        if (string.IsNullOrEmpty(token))
+        {
+            _success = false;
+            StateHasChanged();
+            return;
+        }
+
+        await Localstorage.SetItemAsync("token", token);
+        await Localstorage.SetItemAsync("email", user.UserIdentificator);
+        await AuthStateProvider.GetAuthenticationStateAsync();
+        Navigation.NavigateTo("/");
+    }
+}
