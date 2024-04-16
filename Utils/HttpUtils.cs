@@ -29,9 +29,17 @@ public class HttpUtils
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
         }
-        catch
+        catch (HttpRequestException ex)
         {
-            // ignored
+            Console.WriteLine($"An HTTP request exception occurred: {ex.Message}");
+        }
+        catch (JsonException ex)
+        {
+            Console.WriteLine($"A JSON exception occurred: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An unexpected exception occurred: {ex.Message}");
         }
 
         return default;
@@ -58,9 +66,17 @@ public class HttpUtils
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
         }
-        catch
+        catch (HttpRequestException ex)
         {
-            // ignored
+            Console.WriteLine($"An HTTP request exception occurred: {ex.Message}");
+        }
+        catch (JsonException ex)
+        {
+            Console.WriteLine($"A JSON exception occurred: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An unexpected exception occurred: {ex.Message}");
         }
 
         return default;
@@ -87,9 +103,17 @@ public class HttpUtils
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
         }
-        catch
+        catch (HttpRequestException ex)
         {
-            // ignored
+            Console.WriteLine($"An HTTP request exception occurred: {ex.Message}");
+        }
+        catch (JsonException ex)
+        {
+            Console.WriteLine($"A JSON exception occurred: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An unexpected exception occurred: {ex.Message}");
         }
 
         return default;
@@ -115,9 +139,17 @@ public class HttpUtils
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
         }
-        catch
+        catch (HttpRequestException ex)
         {
-            // ignored
+            Console.WriteLine($"An HTTP request exception occurred: {ex.Message}");
+        }
+        catch (JsonException ex)
+        {
+            Console.WriteLine($"A JSON exception occurred: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An unexpected exception occurred: {ex.Message}");
         }
 
         return default;
