@@ -26,11 +26,11 @@
             <NotAuthorized>
                <MudPaper Class="pa-4">
                    <MudForm @bind-IsValid="@_success" @ref="_form">
-                       <MudTextField T="string" Label="Email" Required="true" @bind-Value="id" RequiredError=@Localizer["EmailRequired"]/>
-                       <MudTextField @bind-Value="password" Label=@Localizer["Password"]
+                       <MudTextField T="string" Label="Email" Required="true" @bind-Value="_id" RequiredError=@Localizer["EmailRequired"]/>
+                       <MudTextField @bind-Value="_password" Label=@Localizer["Password"]
                                      RequiredError=@Localizer["PasswordRequired"] Required="true"
-                                     Variant="Variant.Text" InputType="@PasswordInput"
-                                     Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="EyeBtnClick"
+                                     Variant="Variant.Text" InputType="@_passwordInput"
+                                     Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="EyeBtnClick"
                                      AdornmentAriaLabel="Show Password" />
 
                        <div class="d-flex align-center justify-space-between mt-4">
@@ -46,26 +46,26 @@
 
 @code {
     bool _success;
-    MudForm _form;
-    string password;
-    string id;
+    MudForm? _form;
+    string? _password;
+    string? _id;
 
-    bool isShow;
-    InputType PasswordInput = InputType.Password;
-    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    bool _isShow;
+    InputType _passwordInput = InputType.Password;
+    string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
 
     void EyeBtnClick()
     {
-        @if (isShow)
+        @if (_isShow)
         {
-            isShow = false;
-            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
-            PasswordInput = InputType.Password;
+            _isShow = false;
+            _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+            _passwordInput = InputType.Password;
         }
         else {
-            isShow = true;
-            PasswordInputIcon = Icons.Material.Filled.Visibility;
-            PasswordInput = InputType.Text;
+            _isShow = true;
+            _passwordInputIcon = Icons.Material.Filled.Visibility;
+            _passwordInput = InputType.Text;
         }
     }
 
@@ -77,10 +77,17 @@
 
     async Task HandleLogin()
     {
+        if(string.IsNullOrWhiteSpace(_id) || string.IsNullOrWhiteSpace(_password))
+        {
+            _success = false;
+            StateHasChanged();
+            return;
+        }
+        
         var user = new UserLoginDto
         {
-            UserIdentificator = id,
-            Password = password
+            UserIdentificator = _id,
+            Password = _password
         };
 
         var token = await HttpUtils.Post<string>("authentication", user);

@@ -11,21 +11,21 @@
 <MudGrid>
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
-            <MudForm @ref="form" @bind-IsValid="@success">
-                <MudTextField T="string" Label=@Localizer["FirstName"] Required="true" RequiredError=@Localizer["FirstNameRequired"] @bind-Value="firstName" />
-                <MudTextField T="string" Label=@Localizer["LastName"] Required="true" RequiredError=@Localizer["LastNameRequired"] @bind-Value="lastName" />
-                <MudTextField @bind-Value="password" Label=@Localizer["Password"] HelperText=@Localizer["PasswordStrength"]
+            <MudForm @ref="_form" @bind-IsValid="@_success">
+                <MudTextField T="string" Label=@Localizer["FirstName"] Required="true" RequiredError=@Localizer["FirstNameRequired"] @bind-Value="_firstName" />
+                <MudTextField T="string" Label=@Localizer["LastName"] Required="true" RequiredError=@Localizer["LastNameRequired"] @bind-Value="_lastName" />
+                <MudTextField @bind-Value="_password" Label=@Localizer["Password"] HelperText=@Localizer["PasswordStrength"]
                               Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))"
                               RequiredError=@Localizer["PasswordRequiredErrorMessage"] Required="true"
-                              Variant="Variant.Text" InputType="@PasswordInput"
-                              Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="EyeBtnClick"
+                              Variant="Variant.Text" InputType="@_passwordInput"
+                              Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="EyeBtnClick"
                               AdornmentAriaLabel=@Localizer["ShowPassword"]/>
                 <MudTextField T="string"
                               Label=@Localizer["Password"] HelperText=@Localizer["RepeatPassword"] Required="true" InputType="InputType.Password"
                               Validation="@(new Func<string, string>(PasswordMatch))"/>
                 <div class="d-flex align-center justify-space-between">
                     <MudCheckBox T="bool" Required="true" RequiredError=@Localizer["AgreeToTOS"] Label=@Localizer["IAgreeToTOS"]/>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="@CreateUser">@Localizer["Register"]</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto" OnClick="@CreateUser">@Localizer["Register"]</MudButton>
                 </div>
             </MudForm>
         </MudPaper>
@@ -36,28 +36,28 @@
     [Parameter]
     public Guid Token { get; set; }
 
-    bool success;
-    string password;
-    string firstName;
-    string lastName;
-    MudForm form;
+    bool _success;
+    string? _password;
+    string? _firstName;
+    string? _lastName;
+    MudForm? _form;
 
-    bool isShow;
-    InputType PasswordInput = InputType.Password;
-    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    bool _isShow;
+    InputType _passwordInput = InputType.Password;
+    string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
 
     void EyeBtnClick()
     {
-        @if (isShow)
+        @if (_isShow)
         {
-            isShow = false;
-            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
-            PasswordInput = InputType.Password;
+            _isShow = false;
+            _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+            _passwordInput = InputType.Password;
         }
         else {
-            isShow = true;
-            PasswordInputIcon = Icons.Material.Filled.Visibility;
-            PasswordInput = InputType.Text;
+            _isShow = true;
+            _passwordInputIcon = Icons.Material.Filled.Visibility;
+            _passwordInput = InputType.Text;
         }
     }
 
@@ -80,16 +80,16 @@
 
     private string? PasswordMatch(string arg)
     {
-        return password != arg ? @Localizer["PasswordMatch"] : null;
+        return _password != arg ? @Localizer["PasswordMatch"] : null;
     }
 
     private async Task CreateUser()
     {
         var user = new NewUser()
         {
-            FirstName = firstName,
-            LastName = lastName,
-            Password = password,
+            FirstName = _firstName,
+            LastName = _lastName,
+            Password = _password,
             Token = Token.ToString()
         };
 
@@ -99,6 +99,6 @@
             NavigationManager.NavigateTo("/login");
             return;
         }
-        form.Reset();
+        _form.Reset();
     }
 }

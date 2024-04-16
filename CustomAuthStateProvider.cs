@@ -30,5 +30,4 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
 
         return state;
     }
-
 }
