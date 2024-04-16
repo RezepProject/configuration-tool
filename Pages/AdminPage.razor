@@ -13,25 +13,25 @@
     <MudItem xs="12" sm="12">
         <MudAlert Severity="Severity.Info">@Localizer["AddNewMembers"]</MudAlert>
         <MudPaper Class="pa-4">
-            <MudForm @ref="form" @bind-IsValid="@success">
+            <MudForm @ref="_form" @bind-IsValid="@_success">
                 <h2>Invite new user</h2>
                 <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
-                              Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })" @ref="email"/>
-                <MudSelect T="string" Label="Role" AnchorOrigin="Origin.BottomCenter" Required="true" @ref="role">
-                    @if (roles.Count == 0)
+                              Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })" @ref="_email"/>
+                <MudSelect T="string" Label="Role" AnchorOrigin="Origin.BottomCenter" Required="true" @ref="_role">
+                    @if (_roles.Count == 0)
                     {
                         <MudSelectItem Value="@("No roles available")"/>
                     }
                     else
                     {
-                        foreach (var r in roles)
+                        foreach (var r in _roles)
                         {
                             <MudSelectItem Value="@(r.Name)"/>
                         }
                     }
                 </MudSelect>
                 <div class="d-flex align-center justify-space-between" style="margin-top: 2em;">
-                    <MudButton OnClick="@RegisterUser" Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">@Localizer["RegisterUser"]</MudButton>
+                    <MudButton OnClick="@RegisterUser" Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto">@Localizer["RegisterUser"]</MudButton>
                 </div>
             </MudForm>
         </MudPaper>
@@ -40,7 +40,7 @@
         <MudAlert Severity="Severity.Info">Here you can manage current invitations.</MudAlert>
         <MudPaper Class="pa-4">
             <h2 style="margin-bottom: 1em;">Manage current invitations</h2>
-            <MudTable Items="invitations" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+            <MudTable Items="_invitations" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
                 <HeaderContent>
                     <MudTh><b>@Localizer["Email"]</b></MudTh>
                     <MudTh><b>@Localizer["Role"]</b></MudTh>
@@ -49,7 +49,7 @@
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd>@context.Email</MudTd>
-                    <MudTd>@roles.Find(r => r.Id == context.RoleId)?.Name</MudTd>
+                    <MudTd>@_roles.Find(r => r.Id == context.RoleId)?.Name</MudTd>
                     <MudTd>@context.CreatedAt.ToShortDateString()</MudTd>
                     <MudTd>
                         <div class="d-flex pa-4">
@@ -69,7 +69,7 @@
         <MudAlert Severity="Severity.Info">Here you can manage current users.</MudAlert>
         <MudPaper Class="pa-4">
             <h2 style="margin-bottom: 1em;">Manage current users</h2>
-            <MudTable Items="@users" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+            <MudTable Items="@_users" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
                 <HeaderContent>
                     <MudTh><b>@Localizer["Email"]</b></MudTh>
                     <MudTh><b>@Localizer["Role"]</b></MudTh>
@@ -79,23 +79,23 @@
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd>@context.Email</MudTd>
-                    <MudTd>@roles.Find(r => r.Id == context.RoleId)?.Name</MudTd>
+                    <MudTd>@_roles.Find(r => r.Id == context.RoleId)?.Name</MudTd>
                     <MudTd>@context.FirstName</MudTd>
                     <MudTd>@context.LastName</MudTd>
                     <MudTd>
                         <div class="d-flex pa-4">
                             <MudSelect Style="margin-right: 2em;" T="string" Label="Role"
-                                       Disabled="@(context.Email == userEmail)"
-                                       Value="@roles.Find(r => r.Id == context.RoleId)!.Name"
+                                       Disabled="@(context.Email == _userEmail)"
+                                       Value="@_roles.Find(r => r.Id == context.RoleId)!.Name"
                                        ValueChanged="() => ChangeRole(context.Id)" AnchorOrigin="Origin.BottomCenter"
-                                       @ref="roleChange">
-                                @if (roles.Count == 0)
+                                       @ref="_roleChange">
+                                @if (_roles.Count == 0)
                                 {
                                     <MudSelectItem Value="@("No roles available")"/>
                                 }
                                 else
                                 {
-                                    foreach (var r in roles)
+                                    foreach (var r in _roles)
                                     {
                                         <MudSelectItem Value="@(r.Name)"/>
                                     }
@@ -115,15 +115,15 @@
 <!--TODO: Add list of users -->
 
 @code {
-    bool success;
-    MudForm form;
-    List<Role> roles = new List<Role>();
-    List<User> users = new List<User>();
-    List<Invitation> invitations = new List<Invitation>();
-    MudTextField<string> email;
-    MudSelect<string> role;
-    MudSelect<string> roleChange;
-    string userEmail = "";
+    bool _success;
+    MudForm _form;
+    List<Role> _roles = new List<Role>();
+    List<User> _users = new List<User>();
+    List<Invitation> _invitations = new List<Invitation>();
+    MudTextField<string> _email;
+    MudSelect<string> _role;
+    MudSelect<string> _roleChange;
+    string _userEmail = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -140,11 +140,11 @@
             return;
         }
 
-        roles = roleRes;
-        users = userRes;
-        invitations = invitationRes;
+        _roles = roleRes;
+        _users = userRes;
+        _invitations = invitationRes;
 
-        userEmail = await Localstorage.GetItemAsync<string>("email");
+        _userEmail = await Localstorage.GetItemAsync<string>("email");
 
         await base.OnInitializedAsync();
     }
@@ -161,10 +161,10 @@
 
     private async Task ChangeRole(int id)
     {
-        var user = users.FirstOrDefault(u => u.Id == id);
+        var user = _users.FirstOrDefault(u => u.Id == id);
         if (user == null) return;
 
-        var role = roles.FirstOrDefault(r => r.Name == roleChange.Value);
+        var role = _roles.FirstOrDefault(r => r.Name == _roleChange.Value);
         if (role == null) return;
 
         user.RoleId = role.Id;
@@ -181,8 +181,8 @@
     {
         var user = new CreateUser()
         {
-            Email = email.Value,
-            RoleId = roles.FirstOrDefault(r => r.Name == role.Value)!.Id
+            Email = _email.Value,
+            RoleId = _roles.FirstOrDefault(r => r.Name == _role.Value)!.Id
         };
         var res = await HttpUtils.Post<object>("configuser", user, await CheckJwt());
         Console.WriteLine(res);
@@ -194,7 +194,7 @@
             return;
         }
 
-        form.Reset();
+        _form.Reset();
         await UpdateInvitations();
     }
 
@@ -221,7 +221,7 @@
             return;
         }
 
-        users.RemoveAll(u => u.Id == id);
+        _users.RemoveAll(u => u.Id == id);
 
         // TODO: animation?
     }
@@ -265,6 +265,6 @@
     {
         var invitationRes = await GetInvitations(await CheckJwt());
         if (invitationRes == null) return;
-        invitations = invitationRes;
+        _invitations = invitationRes;
     }
 }

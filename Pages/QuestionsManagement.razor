@@ -10,36 +10,35 @@
 <MudGrid>
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
-            <MudForm @ref="form" @bind-IsValid="@success">
-                <MudTextField T="string" Label=@Localizer["Question"] Required="true" @ref="questionInput"
+            <MudForm @ref="_form" @bind-IsValid="@_success">
+                <MudTextField T="string" Label=@Localizer["Question"] Required="true" @ref="_questionInput"
                               RequiredError=@Localizer["ErrorTextQuestion"]
                               Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
 
-                <MudTextField T="string" Label=@Localizer["Answer"] Required="true" @ref="answerInput"
+                <MudTextField T="string" Label=@Localizer["Answer"] Required="true" @ref="_answerInput"
                               RequiredError=@Localizer["ErrorTextAnswer"]
                               Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
 
             </MudForm>
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(() => form.Validate())">@Localizer["Submit"]</MudButton>
-            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => form.Reset())">@Localizer["Reset"]</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(() => _form.Validate())">@Localizer["Submit"]</MudButton>
+            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => _form.Reset())">@Localizer["Reset"]</MudButton>
         </MudPaper>
     </MudItem>
 </MudGrid>
 
 
 @code {
-    bool success;
-    MudTextField<string> questionInput;
-    MudTextField<string> answerInput;
-    MudForm form;
-    List<Question> questions = new List<Question>();
+    bool _success;
+    MudTextField<string> _questionInput;
+    MudTextField<string> _answerInput;
+    MudForm _form;
+    List<Question> _questions = new List<Question>();
 
     private IEnumerable<string> LengthCheck(string input)
     {
         if (input.Length < 10 || string.IsNullOrWhiteSpace(input))
             yield return Localizer["ErrorTextInputQuestionManagment"];
     }
-
 }
