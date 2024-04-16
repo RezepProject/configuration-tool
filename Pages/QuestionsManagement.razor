@@ -31,9 +31,9 @@
 
 @code {
     bool _success;
-    MudTextField<string> _questionInput;
-    MudTextField<string> _answerInput;
-    MudForm _form;
+    MudTextField<string>? _questionInput;
+    MudTextField<string>? _answerInput;
+    MudForm? _form;
     List<Question> _questions = new List<Question>();
 
     private IEnumerable<string> LengthCheck(string input)

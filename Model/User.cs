@@ -27,14 +27,14 @@ public class Invitation
 public class NewUser
 {
     public int Id { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Password { get; set; }
-    public string Token { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? Password { get; set; }
+    public string? Token { get; set; }
 }
 
 public class ChangePasswordToken
 {
     public Guid Token { get; set; }
-    public string NewPassword { get; set; }
+    public string? NewPassword { get; set; }
 }

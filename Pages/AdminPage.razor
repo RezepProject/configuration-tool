@@ -116,13 +116,13 @@
 
 @code {
     bool _success;
-    MudForm _form;
+    MudForm? _form;
     List<Role> _roles = new List<Role>();
     List<User> _users = new List<User>();
     List<Invitation> _invitations = new List<Invitation>();
-    MudTextField<string> _email;
-    MudSelect<string> _role;
-    MudSelect<string> _roleChange;
+    MudTextField<string>? _email;
+    MudSelect<string>? _role;
+    MudSelect<string>? _roleChange;
     string _userEmail = "";
 
     protected override async Task OnInitializedAsync()
