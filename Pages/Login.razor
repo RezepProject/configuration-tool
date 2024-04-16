@@ -77,6 +77,13 @@
 
     async Task HandleLogin()
     {
+        if(string.IsNullOrWhiteSpace(_id) || string.IsNullOrWhiteSpace(_password))
+        {
+            _success = false;
+            StateHasChanged();
+            return;
+        }
+        
         var user = new UserLoginDto
         {
             UserIdentificator = _id,
