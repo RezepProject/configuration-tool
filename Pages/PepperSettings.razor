@@ -1,6 +1,95 @@
 ﻿@page "/pepper-settings"
+@using ConfigurationTool.Model
 @inject IStringLocalizer<ApplicationResource> Localizer
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Pepper Settings</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">@Localizer["NotImplemented"]</MudText>
+<h1>Assistant Settings: </h1>
+
+@code{
+    List<Assistant> Robots = new List<Assistant>();
+    String ToggleText = "Shrink";
+
+    protected override void OnInitialized()
+    {
+        Robots.Add(new Assistant());
+        Robots.Add(new Assistant());
+        Robots.Add(new Assistant());
+        Robots.Add(new Assistant());
+    }
+
+    private void ToggleExpansion(Assistant assistant)
+    {
+        assistant.IsExpanded = !assistant.IsExpanded;
+
+        if (ToggleText == "Shrink")
+        {
+            ToggleText = "Expand";
+        }
+        else
+        {
+            ToggleText = "Shrink";
+        }
+    }
+
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+
+    private void UploadFiles(IBrowserFile file)
+    {
+        files.Add(file);
+        //TODO upload the files to the server
+    }
+
+    private string SetLanguage(string language, Assistant robot)
+    {
+        robot.Language = language;
+        return language;
+    }
+
+}
+
+@foreach (var robot in Robots)
+{
+    <MudCard Class="mb-4">
+        <MudCardContent>
+            <h3>Robot Settings - @robot.Name</h3>
+            @if (robot.IsExpanded)
+            {
+                <MudSelect T="string" Label="Language" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@(SetLanguage("English", robot))"/>
+                    <MudSelectItem Value="@(SetLanguage("German", robot))"/>
+                </MudSelect>
+                <p style="margin-top: 25px">Talking Speed: @robot.TalkingSpeed</p>
+                <MudSlider Label="Talking Speed" @bind-Value="@robot.TalkingSpeed" Min="0.5" Max="2" Step="0.25"/>
+                <MudTextField Label="Greeting Message" @bind-Value="@robot.GreetingMessage"/>
+                <div style="margin-top: 20px">
+                    <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles" MaximumFileCount="100">
+                        <ButtonTemplate>
+                            <label for="fileUploadInput" onclick="document.getElementById('fileUploadInput').click()">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload">
+                                    Only image files
+                                </MudButton>
+                            </label>
+                        </ButtonTemplate>
+                    </MudFileUpload>
+                    <input id="fileUploadInput" type="file" style="display:none;"/>
+                </div>
+            }
+            <MudCardActions Style="display: flex; justify-content: space-between;">
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="() => ToggleExpansion(robot)">@ToggleText</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Success">Save Changes</MudButton>
+            </MudCardActions>
+        </MudCardContent >
+    </MudCard>
+    @if (files != null)
+    {
+        <MudList>
+            @foreach (var file in files)
+            {
+                <MudListItem Icon="@Icons.Material.Filled.AttachFile">
+                    @file.Name <code>@file.Size bytes</code>
+                </MudListItem>
+            }
+        </MudList>
+    }
+}
