@@ -7,37 +7,29 @@
 <h1>Assistant Settings: </h1>
 
 @code{
-    List<Assistant> Robots = new List<Assistant>();
-    String ToggleText = "Shrink";
+    List<Assistant> _robots = new List<Assistant>();
+    string _toggleText = "Shrink";
 
     protected override void OnInitialized()
     {
-        Robots.Add(new Assistant());
-        Robots.Add(new Assistant());
-        Robots.Add(new Assistant());
-        Robots.Add(new Assistant());
+        _robots.Add(new Assistant());
+        _robots.Add(new Assistant());
+        _robots.Add(new Assistant());
+        _robots.Add(new Assistant());
     }
 
     private void ToggleExpansion(Assistant assistant)
     {
         assistant.IsExpanded = !assistant.IsExpanded;
 
-        if (ToggleText == "Shrink")
+        if (_toggleText == "Shrink")
         {
-            ToggleText = "Expand";
+            _toggleText = "Expand";
         }
         else
         {
-            ToggleText = "Shrink";
+            _toggleText = "Shrink";
         }
-    }
-
-    IList<IBrowserFile> files = new List<IBrowserFile>();
-
-    private void UploadFiles(IBrowserFile file)
-    {
-        files.Add(file);
-        //TODO upload the files to the server
     }
 
     private string SetLanguage(string language, Assistant robot)
@@ -45,10 +37,9 @@
         robot.Language = language;
         return language;
     }
-
 }
 
-@foreach (var robot in Robots)
+@foreach (var robot in _robots)
 {
     <MudCard Class="mb-4">
         <MudCardContent>
@@ -62,6 +53,7 @@
                 <p style="margin-top: 25px">Talking Speed: @robot.TalkingSpeed</p>
                 <MudSlider Label="Talking Speed" @bind-Value="@robot.TalkingSpeed" Min="0.5" Max="2" Step="0.25"/>
                 <MudTextField Label="Greeting Message" @bind-Value="@robot.GreetingMessage"/>
+                
                 <div style="margin-top: 20px">
                     <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles" MaximumFileCount="100">
                         <ButtonTemplate>
@@ -72,24 +64,13 @@
                             </label>
                         </ButtonTemplate>
                     </MudFileUpload>
-                    <input id="fileUploadInput" type="file" style="display:none;"/>
+                    <input id="fileUploadInput" type="file" style="display:none;" />
                 </div>
             }
             <MudCardActions Style="display: flex; justify-content: space-between;">
-                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="() => ToggleExpansion(robot)">@ToggleText</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="() => ToggleExpansion(robot)">@_toggleText</MudButton>
                 <MudButton Variant="Variant.Filled" Color="Color.Success">Save Changes</MudButton>
             </MudCardActions>
         </MudCardContent >
     </MudCard>
-    @if (files != null)
-    {
-        <MudList>
-            @foreach (var file in files)
-            {
-                <MudListItem Icon="@Icons.Material.Filled.AttachFile">
-                    @file.Name <code>@file.Size bytes</code>
-                </MudListItem>
-            }
-        </MudList>
-    }
 }
