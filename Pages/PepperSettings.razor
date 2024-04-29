@@ -1,26 +1,47 @@
 ﻿@page "/pepper-settings"
+@using Blazored.LocalStorage
 @using ConfigurationTool.Model
+@using ConfigurationTool.Utils
 @inject IStringLocalizer<ApplicationResource> Localizer
+@inject ILocalStorageService Localstorage
+@inject NavigationManager NavigationManager
 
 <PageTitle>Pepper Settings</PageTitle>
-
-<h1>Assistant Settings: </h1>
 
 @code{
     List<Assistant> _robots = new List<Assistant>();
     string _toggleText = "Shrink";
+    string _fileUploadInput = "";
+    private bool IsLoading { get; set; } = true;
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
-        _robots.Add(new Assistant());
-        _robots.Add(new Assistant());
-        _robots.Add(new Assistant());
-        _robots.Add(new Assistant());
+        List<Assistant> assList = await HttpUtils.Get<List<Assistant>>("settings", await CheckJwt());
+        //todo add list to robots
+        foreach (Assistant a in assList)
+        {
+            _robots.Add(a);
+            Console.WriteLine($"Assistant: {a.Name} added to list.");
+        }
+
+        IsLoading = false;
+        Console.WriteLine("done");
+        StateHasChanged(); 
+    }
+
+    async Task<string> CheckJwt()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+        if (token != null) return token;
+
+        await Localstorage.RemoveItemAsync("token");
+        NavigationManager.NavigateTo("/login");
+        return "";
     }
 
     private void ToggleExpansion(Assistant assistant)
     {
-        assistant.IsExpanded = !assistant.IsExpanded;
+        /*assistant.IsExpanded = !assistant.IsExpanded;
 
         if (_toggleText == "Shrink")
         {
@@ -29,7 +50,7 @@
         else
         {
             _toggleText = "Shrink";
-        }
+        }*/
     }
 
     private string SetLanguage(string language, Assistant robot)
@@ -37,40 +58,54 @@
         robot.Language = language;
         return language;
     }
+
 }
 
-@foreach (var robot in _robots)
+<h1>Assistant Settings: </h1>
+@if (IsLoading)
 {
-    <MudCard Class="mb-4">
-        <MudCardContent>
-            <h3>Robot Settings - @robot.Name</h3>
-            @if (robot.IsExpanded)
-            {
-                <MudSelect T="string" Label="Language" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="@(SetLanguage("English", robot))"/>
-                    <MudSelectItem Value="@(SetLanguage("German", robot))"/>
-                </MudSelect>
-                <p style="margin-top: 25px">Talking Speed: @robot.TalkingSpeed</p>
-                <MudSlider Label="Talking Speed" @bind-Value="@robot.TalkingSpeed" Min="0.5" Max="2" Step="0.25"/>
-                <MudTextField Label="Greeting Message" @bind-Value="@robot.GreetingMessage"/>
-                
-                <div style="margin-top: 20px">
-                    <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles" MaximumFileCount="100">
-                        <ButtonTemplate>
-                            <label for="fileUploadInput" onclick="document.getElementById('fileUploadInput').click()">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload">
-                                    Only image files
-                                </MudButton>
-                            </label>
-                        </ButtonTemplate>
-                    </MudFileUpload>
-                    <input id="fileUploadInput" type="file" style="display:none;" />
-                </div>
-            }
-            <MudCardActions Style="display: flex; justify-content: space-between;">
-                <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="() => ToggleExpansion(robot)">@_toggleText</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Success">Save Changes</MudButton>
-            </MudCardActions>
-        </MudCardContent >
-    </MudCard>
+    <p>Loading...</p>
+}
+else
+{
+    @foreach (var robot in _robots)
+    {
+        <MudCard Class="mb-4">
+            <MudCardContent>
+                <h3>Robot Settings - @robot.Name</h3>
+                @if ( /*robot.IsExpanded*/ true)
+                {
+                    <MudSelect T="string" Label="Language" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem Value="@(SetLanguage("English", robot))"/>
+                        <MudSelectItem Value="@(SetLanguage("German", robot))"/>
+                    </MudSelect>
+                    <p style="margin-top: 25px">Talking Speed: @robot.TalkingSpeed</p>
+                    <MudSlider Label="Talking Speed" @bind-Value="@robot.TalkingSpeed" Min="0.5" Max="2" Step="0.25"/>
+                    <MudTextField Label="Greeting Message" @bind-Value="@robot.GreetingMessage"/>
+
+                    <div style="margin-top: 20px">
+                        <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles" MaximumFileCount="100">
+                            <ButtonTemplate>
+                                <label for="fileUploadInput" onclick="document.getElementById('fileUploadInput').click()">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload">
+                                        Only image files
+                                    </MudButton>
+                                </label>
+                            </ButtonTemplate>
+                        </MudFileUpload>
+                        <input id="fileUploadInput" type="file" style="display:none;"/>
+                    </div>
+                }
+                @if (_fileUploadInput != "")
+                {
+                    <p>works</p>
+                }
+                <MudCardActions Style="display: flex; justify-content: space-between;">
+                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="() => ToggleExpansion(robot)">@_toggleText</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Success">Save Changes</MudButton>
+                </MudCardActions>
+            </MudCardContent >
+        </MudCard>
+    }
+    
 }
