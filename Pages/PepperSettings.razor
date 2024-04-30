@@ -75,6 +75,11 @@
         }
     }
 
+    private async void SaveChangesToAssistant(Assistant updatedAssistant)
+    {
+        await HttpUtils.Put<Assistant>($"settings/{updatedAssistant.Id}", updatedAssistant, await CheckJwt());
+    }
+
     private string SetLanguage(string language, Assistant robot)
     {
         robot.Language = language;
@@ -97,6 +102,7 @@ else
                 <h3>Assistant: @robot.Name</h3>
                 @if (robot.IsExpanded)
                 {
+                    <MudTextField Label="Name" @bind-Value="@robot.Name"/>
                     <MudSelect T="string" Label="Language" AnchorOrigin="Origin.BottomCenter">
                         <MudSelectItem Value="@(SetLanguage("English", robot))"/>
                         <MudSelectItem Value="@(SetLanguage("German", robot))"/>
@@ -124,7 +130,7 @@ else
                 }
                 <MudCardActions Style="display: flex; justify-content: space-between;">
                     <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="() => ToggleExpansion(robot)">@_toggleText</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Success">Save Changes</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" @onclick="() => SaveChangesToAssistant(robot)">Save Changes</MudButton>
                 </MudCardActions>
             </MudCardContent >
         </MudCard>
