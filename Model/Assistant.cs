@@ -11,5 +11,5 @@ public class Assistant
     public double TalkingSpeed { get; set; }
     public string GreetingMessage { get; set; }
     public bool State { get; set; }
-    //public bool IsExpanded { get; set; }
+    public bool IsExpanded { get; set; }
 }

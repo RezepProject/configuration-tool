@@ -20,6 +20,7 @@
         //todo add list to robots
         foreach (Assistant a in assList)
         {
+            a.IsExpanded = true;
             _robots.Add(a);
             Console.WriteLine($"Assistant: {a.Name} added to list.");
         }
@@ -39,9 +40,30 @@
         return "";
     }
 
+    private async void AddRobot()
+    {
+        Assistant newAssistant = new Assistant()
+        {
+            BackgroundImage = "",
+            Name = "new Assistant",
+            Language = "German",
+            TalkingSpeed = 1,
+            GreetingMessage = "Hello, I am a new Assistant.",
+            State = true,
+            IsExpanded = true,
+        };
+        var res = await HttpUtils.Post<Assistant>("settings", newAssistant, await CheckJwt());
+        
+        if (res == null)
+            return;
+        
+        _robots.Add(newAssistant);
+        StateHasChanged();
+    }
+
     private void ToggleExpansion(Assistant assistant)
     {
-        /*assistant.IsExpanded = !assistant.IsExpanded;
+        assistant.IsExpanded = !assistant.IsExpanded;
 
         if (_toggleText == "Shrink")
         {
@@ -50,7 +72,7 @@
         else
         {
             _toggleText = "Shrink";
-        }*/
+        }
     }
 
     private string SetLanguage(string language, Assistant robot)
@@ -72,8 +94,8 @@ else
     {
         <MudCard Class="mb-4">
             <MudCardContent>
-                <h3>Robot Settings - @robot.Name</h3>
-                @if ( /*robot.IsExpanded*/ true)
+                <h3>Assistant: @robot.Name</h3>
+                @if (robot.IsExpanded)
                 {
                     <MudSelect T="string" Label="Language" AnchorOrigin="Origin.BottomCenter">
                         <MudSelectItem Value="@(SetLanguage("English", robot))"/>
@@ -107,5 +129,5 @@ else
             </MudCardContent >
         </MudCard>
     }
-    
+    <MudButton Variant="Variant.Filled" @onclick="AddRobot" Color="Color.Success">Add Assistant</MudButton>
 }
