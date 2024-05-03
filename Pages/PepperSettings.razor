@@ -17,7 +17,6 @@
     protected override async void OnInitialized()
     {
         List<Assistant> assList = await HttpUtils.Get<List<Assistant>>("settings", await CheckJwt());
-        //todo add list to robots
         foreach (Assistant a in assList)
         {
             a.IsExpanded = true;
@@ -111,18 +110,21 @@ else
                     <MudSlider Label="Talking Speed" @bind-Value="@robot.TalkingSpeed" Min="0.5" Max="2" Step="0.25"/>
                     <MudTextField Label="Greeting Message" @bind-Value="@robot.GreetingMessage"/>
 
+                    <MudCardActions Style="display: flex; justify-content: space-between;">
                     <div style="margin-top: 20px">
                         <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles" MaximumFileCount="100">
                             <ButtonTemplate>
                                 <label for="fileUploadInput" onclick="document.getElementById('fileUploadInput').click()">
                                     <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload">
-                                        Only image files
+                                        Upload Backgound Image
                                     </MudButton>
                                 </label>
                             </ButtonTemplate>
                         </MudFileUpload>
                         <input id="fileUploadInput" type="file" style="display:none;"/>
                     </div>
+                    <MudButton Variant="Variant.Filled" Color="robot.State ? Color.Success : Color.Secondary" @onclick="() => robot.State = !robot.State">@(robot.State ? "ENABLED" : "DISABLED")</MudButton>
+                    </MudCardActions>
                 }
                 @if (_fileUploadInput != "")
                 {
