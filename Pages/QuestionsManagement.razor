@@ -1,44 +1,73 @@
 ﻿@page "/manage-questions"
 @using ConfigurationTool.Model
+@using System.ComponentModel.DataAnnotations
+@using ConfigurationTool.Utils
 @attribute [Authorize]
-<!-- TODO: Add roles here like this attribute [Authorize(Roles = "Admin")] -->
 @inject IStringLocalizer<ApplicationResource> Localizer
 
 <PageTitle>@Localizer["QuestionsManagement"]</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">@Localizer["QuestionsManagement"]</MudText>
-<!-- // TODO: Continue here 26:30 https://www.youtube.com/watch?v=Yh16E2u2pio -->
-<MudGrid>
-    <MudItem xs="12" sm="7">
-        <MudPaper Class="pa-4">
-            <MudForm @ref="_form" @bind-IsValid="@_success">
-                <MudTextField T="string" Label=@Localizer["Question"] Required="true" @ref="_questionInput"
-                              RequiredError=@Localizer["ErrorTextQuestion"]
-                              Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
 
-                <MudTextField T="string" Label=@Localizer["Answer"] Required="true" @ref="_answerInput"
-                              RequiredError=@Localizer["ErrorTextAnswer"]
-                              Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
-
-            </MudForm>
-        </MudPaper>
-        <MudPaper Class="pa-4 mt-4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(() => _form.Validate())">@Localizer["Submit"]</MudButton>
-            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => _form.Reset())">@Localizer["Reset"]</MudButton>
-        </MudPaper>
-    </MudItem>
-</MudGrid>
+<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator/>
+    <MudCard>
+        <MudCardContent>
+            <MudTextField Label=@Localizer["Question"] @bind-Value="model.Text" For="@(() => model.Text)">
+            </MudTextField>
+            @foreach (var answer in model.Answers)
+            {
+                <MudTextField Label=@Localizer["Answer"] @bind-Value="answer.Text" For="@(() => answer.Text)"/>
+            }
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Color="Color.Info" OnClick="() => AddAnswer()">Add answer</MudButton>
+            <MudButton ButtonType="ButtonType.Reset" Color="Color.Error">Reset</MudButton>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>
 
 
 @code {
-    bool _success;
-    MudTextField<string>? _questionInput;
-    MudTextField<string>? _answerInput;
-    MudForm? _form;
-    List<Question> _questions = new List<Question>();
 
-    private IEnumerable<string> LengthCheck(string input)
+    private async void OnValidSubmit(EditContext context)
     {
-        if (input.Length < 10 || string.IsNullOrWhiteSpace(input))
-            yield return Localizer["ErrorTextInputQuestionManagment"];
+        Console.WriteLine("Submitting question");
+        var question = await HttpUtils.Post<CreateQuestion>("/question", model);
+        StateHasChanged();
+    }
+
+    private CreateQuestion model = new()
+    {
+        Text = "",
+        Answers = new List<CreateAnswer>()
+        {
+            new()
+            {
+                User = "NOT IMPLEMENTED",
+            }
+        }
+    };
+
+    private void AddAnswer()
+    {
+        model.Answers.Add(new CreateAnswer()
+        {
+            User = "NOT IMPLEMENTED",
+        });
+    }
+    private class CreateQuestion
+    {
+        [Required]
+        public string Text { get; set; }
+        public List<CreateAnswer> Answers { get; set; }
+    }
+    
+    public class CreateAnswer
+    {
+        [Required]
+        [StringLength(10, ErrorMessage = "The answer text must be at least 10 characters long.")]
+        public string? Text { get; set; }
+        public string? User { get; set; }
     }
 }

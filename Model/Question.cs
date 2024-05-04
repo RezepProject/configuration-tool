@@ -1,4 +1,6 @@
-﻿namespace ConfigurationTool.Model;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ConfigurationTool.Model;
 
 public class Question
 {
@@ -6,10 +8,4 @@ public class Question
     public string? Text { get; set; }
 
     public List<Answer>? Answers { get; set; }
-}
-
-public class CreateQuestion
-{
-    public string? Text { get; set; }
-    public List<CreateAnswer>? Answers { get; set; }
 }
