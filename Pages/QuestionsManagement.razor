@@ -1,9 +1,11 @@
 ﻿@page "/manage-questions"
-@using ConfigurationTool.Model
 @using System.ComponentModel.DataAnnotations
+@using Blazored.LocalStorage
 @using ConfigurationTool.Utils
 @attribute [Authorize]
 @inject IStringLocalizer<ApplicationResource> Localizer
+@inject ILocalStorageService Localstorage
+@inject NavigationManager Navigation
 
 <PageTitle>@Localizer["QuestionsManagement"]</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">@Localizer["QuestionsManagement"]</MudText>
@@ -12,8 +14,7 @@
     <DataAnnotationsValidator/>
     <MudCard>
         <MudCardContent>
-            <MudTextField Label=@Localizer["Question"] @bind-Value="model.Text" For="@(() => model.Text)">
-            </MudTextField>
+            <MudTextField Label=@Localizer["Question"] @bind-Value="model.Text" For="@(() => model.Text)" />
             @foreach (var answer in model.Answers)
             {
                 <MudTextField Label=@Localizer["Answer"] @bind-Value="answer.Text" For="@(() => answer.Text)"/>
@@ -33,7 +34,8 @@
     private async void OnValidSubmit(EditContext context)
     {
         Console.WriteLine("Submitting question");
-        var question = await HttpUtils.Post<CreateQuestion>("/question", model);
+        var question = await HttpUtils.Post<CreateQuestion>("question", model, jwtToken: await CheckJwt());
+        Console.WriteLine(question);
         StateHasChanged();
     }
 
@@ -56,18 +58,30 @@
             User = "NOT IMPLEMENTED",
         });
     }
+
     private class CreateQuestion
     {
-        [Required]
-        public string Text { get; set; }
+        [Required] public string Text { get; set; }
         public List<CreateAnswer> Answers { get; set; }
     }
-    
+
     public class CreateAnswer
     {
         [Required]
         [StringLength(10, ErrorMessage = "The answer text must be at least 10 characters long.")]
         public string? Text { get; set; }
+
         public string? User { get; set; }
     }
+
+    private async Task<string> CheckJwt()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+        if (token != null) return token;
+
+        await Localstorage.RemoveItemAsync("token");
+        Navigation.NavigateTo("/login");
+        return "";
+    }
+
 }
