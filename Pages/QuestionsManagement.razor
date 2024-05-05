@@ -2,6 +2,8 @@
 @using System.ComponentModel.DataAnnotations
 @using Blazored.LocalStorage
 @using ConfigurationTool.Utils
+@using ConfigurationTool.Components
+@using ConfigurationTool.Model
 @attribute [Authorize]
 @inject IStringLocalizer<ApplicationResource> Localizer
 @inject ILocalStorageService Localstorage
@@ -27,14 +29,28 @@
         </MudCardActions>
     </MudCard>
 </EditForm>
+<h3>@Localizer["QuestionListTitle"]</h3>
+@if (_questions != null)
+{
+    <QuestionList Questions="@_questions"></QuestionList>
+}
 
 
 @code {
+    List<Question>? _questions;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var jwt = await CheckJwt();
+        _questions = await HttpUtils.Get<List<Question>>("question", jwtToken: jwt);
+    }
 
     private async void OnValidSubmit(EditContext context)
     {
+        var jwt = await CheckJwt();
         Console.WriteLine("Submitting question");
-        var question = await HttpUtils.Post<CreateQuestion>("question", model, jwtToken: await CheckJwt());
+        var question = await HttpUtils.Post<CreateQuestion>("question", model, jwtToken: jwt);
+        _questions = await HttpUtils.Get<List<Question>>("question", jwtToken: jwt);
         Console.WriteLine(question);
         StateHasChanged();
     }

@@ -265,10 +265,10 @@
     <data name="NotImplemented" xml:space="preserve">
         <value>NOT IMPLEMENTED! (yet)</value>
     </data>
-  
-  
-  
-  
-  
-  
+  <data name="QuestionListTitle" xml:space="preserve">
+    <value>Questions that have already been answered</value>
+  </data>
+  <data name="QuestionScreenBar" xml:space="preserve">
+    <value>Screen for a question</value>
+  </data>
 </root>

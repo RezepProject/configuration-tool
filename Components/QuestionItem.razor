@@ -1,0 +1,12 @@
+﻿@using ConfigurationTool.Model
+
+<MudText>@Question.Text</MudText>
+@foreach (var answer in Question.Answers)
+{
+    <MudText>@answer.Text</MudText>
+
+}
+
+@code {
+    [Parameter] public Question Question { get; set; } = new();
+}

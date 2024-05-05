@@ -366,6 +366,24 @@ namespace ConfigurationTool.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Questions that have already been answered.
+        /// </summary>
+        public static string QuestionListTitle {
+            get {
+                return ResourceManager.GetString("QuestionListTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Screen for a question.
+        /// </summary>
+        public static string QuestionScreenBar {
+            get {
+                return ResourceManager.GetString("QuestionScreenBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Question Management.
         /// </summary>
         public static string QuestionsManagement {

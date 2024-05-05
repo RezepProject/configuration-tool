@@ -144,4 +144,10 @@
     <data name="NotImplemented" xml:space="preserve">
         <value>Noch nicht implementiert!</value>
     </data>
+    <data name="QuestionListTitle" xml:space="preserve">
+        <value>Fragen die schon beantwortet wurden</value>
+    </data>
+    <data name="QuestionScreenBar" xml:space="preserve">
+        <value>Suche ein Frage</value>
+    </data>
 </root>
