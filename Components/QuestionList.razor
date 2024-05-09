@@ -1,7 +1,7 @@
 ﻿@using ConfigurationTool.Model
 @inject IStringLocalizer<ApplicationResource> Localizer
 
-<MudTextField Label=@Localizer["QuestionScreenBar"] @bind-Value="_searchText" Variant="Variant.Text"></MudTextField>
+<MudTextField Immediate="true" Label=@Localizer["QuestionScreenBar"] @bind-Value="_searchText" Variant="Variant.Text"></MudTextField>
 
 @foreach(var question in Questions.Where(q =>
              {
