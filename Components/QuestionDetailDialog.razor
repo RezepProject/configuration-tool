@@ -1,5 +1,10 @@
-﻿@using ConfigurationTool.Model
+﻿@using Blazored.LocalStorage
+@using ConfigurationTool.Model
+@using ConfigurationTool.Utils
 @inject IStringLocalizer<ApplicationResource> Localizer
+@inject ILocalStorageService Localstorage
+@inject NavigationManager Navigation
+
 <MudDialog>
     <DialogContent>
         <MudForm Model="@Question" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0" OnValidSubmit="OnValidSubmit">
@@ -35,7 +40,22 @@
     private readonly CreateQuestionValidator _validator = new();
     
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Delete() => MudDialog.Close(DialogResult.Ok(false));
+
+    async Task Delete()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+
+
+        if (token == null)
+        {
+            await Localstorage.RemoveItemAsync("token");
+            Navigation.NavigateTo("/login");
+            return;
+        }
+        
+        await HttpUtils.Delete<Question>($"question/{Question.Id}", token);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
     void Cancel() => MudDialog.Cancel();
     
     private void AddAnswer()

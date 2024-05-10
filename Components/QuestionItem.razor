@@ -22,10 +22,5 @@
 
         var dialog = DialogService.Show<QuestionDetailDialog>(Question.Text, parameters);
         var result = await dialog.Result;
-
-        if (!result.Cancelled)
-        {
-            // TOOD: Add apply changes
-        }
     }
 }
