@@ -7,21 +7,25 @@
     {
         <MudText>Answer: @answer.Text</MudText>
     }
+    <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+        See Details
+    </MudButton>
 </MudPaper>
-<MudToggleIconButton @bind-Toggled="@_isOpen" Icon="@Icons.Material.Filled.Fullscreen" Color="@Color.Primary" ToggledIcon="@Icons.Material.Filled.FullscreenExit" ToggledColor="@Color.Secondary" />
 
-
-<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
-    Open Simple Dialog
-</MudButton>
 
 @code {
-    private bool _isOpen = false;
     [Parameter] public Question Question { get; set; } = new();
     
-    private void OpenDialog()
+    private async Task OpenDialog()
     {
-        var options = new DialogOptions { CloseOnEscapeKey = true };
-        DialogService.Show<DialogUsageExample_Dialog>("Simple Dialog", options);
+        var parameters = new DialogParameters { ["Question"] = Question };
+
+        var dialog = DialogService.Show<QuestionDetailDialog>(Question.Text, parameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            // TOOD: Add apply changes
+        }
     }
 }

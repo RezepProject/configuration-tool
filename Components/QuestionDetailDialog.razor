@@ -1,0 +1,48 @@
+﻿@using ConfigurationTool.Model
+@inject IStringLocalizer<ApplicationResource> Localizer
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="@Question" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0" OnValidSubmit="OnValidSubmit">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label=@Localizer["Question"] @bind-Value="@Question.Text" For="@(() => Question.Text)" />
+                    @foreach (var answer in Question.Answers)
+                    {
+                    <MudTextField Label=@Localizer["Answer"] @bind-Value="answer.Text" For="@(() => answer.Text)"/>
+                    }
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Color="Color.Info" OnClick="() => AddAnswer()">Add answer</MudButton>
+                    <MudButton ButtonType="ButtonType.Reset" Color="Color.Error">Reset</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="Delete" Color="Color.Warning">Delete</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Save Changes</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public Question Question { get; set; } = new();
+    
+    private MudForm _form = default!;
+    private readonly CreateQuestionValidator _validator = new();
+    
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Delete() => MudDialog.Close(DialogResult.Ok(false));
+    void Cancel() => MudDialog.Cancel();
+    
+    private void AddAnswer()
+    {
+        Question.Answers.Add(new Answer()
+        {
+            User = "NOT IMPLEMENTED",
+        });
+    }
+}
