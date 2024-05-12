@@ -10,24 +10,23 @@
         <MudForm Model="@Question" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0" OnValidSubmit="OnValidSubmit">
             <MudCard>
                 <MudCardContent>
-                    <MudTextField Label=@Localizer["Question"] @bind-Value="@Question.Text" For="@(() => Question.Text)" />
+                    <MudTextField Label=@Localizer["Question"]  @bind-Value="@Question.Text" For="@(() => Question.Text)"/>
                     @foreach (var answer in Question.Answers)
                     {
-                    <MudTextField Label=@Localizer["Answer"] @bind-Value="answer.Text" For="@(() => answer.Text)"/>
+                        <MudTextField Label=@Localizer["Answer"]  @bind-Value="answer.Text" For="@(() => answer.Text)"/>
                     }
                 </MudCardContent>
                 <MudCardActions>
                     <MudButton Color="Color.Info" OnClick="() => AddAnswer()">Add answer</MudButton>
                     <MudButton ButtonType="ButtonType.Reset" Color="Color.Error">Reset</MudButton>
-                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
                 </MudCardActions>
             </MudCard>
         </MudForm>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton OnClick="Delete" Color="Color.Warning">Delete</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Save Changes</MudButton>
+        <MudButton OnClick="Delete" Color="Color.Error">Delete</MudButton>
+        <MudButton OnClick="Submit" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save Changes</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -35,11 +34,21 @@
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter] public Question Question { get; set; } = new();
-    
+
     private MudForm _form = default!;
-    private readonly CreateQuestionValidator _validator = new();
-    
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    private readonly QuestionValidator _validator = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        MudDialog.Options.FullWidth = true;
+    }
+
+
+    async void Submit()
+    {
+        await UpdateQuestion();
+        MudDialog.Close(DialogResult.Ok(true));
+    }
 
     async Task Delete()
     {
@@ -52,12 +61,13 @@
             Navigation.NavigateTo("/login");
             return;
         }
-        
+
         await HttpUtils.Delete<Question>($"question/{Question.Id}", token);
         MudDialog.Close(DialogResult.Ok(true));
     }
+
     void Cancel() => MudDialog.Cancel();
-    
+
     private void AddAnswer()
     {
         Question.Answers.Add(new Answer()
@@ -65,4 +75,20 @@
             User = "NOT IMPLEMENTED",
         });
     }
+
+    private async Task UpdateQuestion()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+
+        if (token == null)
+        {
+            await Localstorage.RemoveItemAsync("token");
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        await HttpUtils.Put<Question>($"question/{Question.Id}", new CreateQuestion(Question), token);
+        Submit();
+    }
+
 }

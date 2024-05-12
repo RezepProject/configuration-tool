@@ -1,5 +1,9 @@
-﻿@using ConfigurationTool.Model
+﻿@using Blazored.LocalStorage
+@using ConfigurationTool.Model
+@using ConfigurationTool.Utils
 @inject IDialogService DialogService
+@inject ILocalStorageService Localstorage
+@inject NavigationManager Navigation
 
 <MudPaper Style="margin-top: 2em; padding: 5px">
     <MudText>Question: @Question.Text</MudText>
@@ -21,6 +25,19 @@
         var parameters = new DialogParameters { ["Question"] = Question };
 
         var dialog = DialogService.Show<QuestionDetailDialog>(Question.Text, parameters);
-        var result = await dialog.Result;
+        
+        if (!(await dialog.Result).Cancelled)
+        {
+            var token = await Localstorage.GetItemAsync<string>("token");
+
+            if (token == null)
+            {
+                await Localstorage.RemoveItemAsync("token");
+                Navigation.NavigateTo("/login");
+                return;
+            }
+            
+            await HttpUtils.Get<Question>($"question/{Question.Id}", token);
+        }
     }
 }
