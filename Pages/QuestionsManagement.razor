@@ -12,31 +12,33 @@
 <PageTitle>@Localizer["QuestionsManagement"]</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">@Localizer["QuestionsManagement"]</MudText>
 
-<MudForm ref="@_form" Model="@_model" >
-    
-</MudForm>
-
-
-
-<MudForm Model="@_model" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0" OnValidSubmit="OnValidSubmit">
+<MudForm Model="@_model" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0">
     <MudCard>
         <MudCardContent>
-            <MudTextField Label=@Localizer["Question"] @bind-Value="@_model.Text" For="@(() => _model.Text)" />
+            <MudTextField Label=@Localizer["Question"]  @bind-Value="@_model.Text" For="@(() => _model.Text)" Immediate="@true"/>
             @foreach (var answer in _model.Answers)
             {
-                <MudTextField Label=@Localizer["Answer"] @bind-Value="answer.Text" For="@(() => answer.Text)"/>
+                <MudTextField Label=@Localizer["Answer"]  @bind-Value="answer.Text" For="@(() => answer.Text)" Immediate="@true"/>
             }
         </MudCardContent>
         <MudCardActions>
             <MudButton Color="Color.Info" OnClick="() => AddAnswer()">Add answer</MudButton>
+            <MudButton Color="Color.Warning" OnClick="() => RemoveAnswer()">Remove answer</MudButton>
             <MudButton ButtonType="ButtonType.Reset" Color="Color.Error">Reset</MudButton>
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add Question</MudButton>
+            <MudButton OnClick="() => OnValidSubmit()" Color="Color.Primary" Class="ml-auto">Add Question</MudButton>
         </MudCardActions>
     </MudCard>
 </MudForm>
-<h3>@Localizer["QuestionListTitle"]</h3>
+
+@if (_questions != null && _questions.Any(q => q.Answers.Count == 0))
+{
+    <h3>Nicht beantwortet Fragen</h3>
+    <QuestionList Questions="@_questions.Where(q => q.Answers.Count == 0).ToList()"></QuestionList>
+}
+
 @if (_questions != null)
 {
+    <h3>@Localizer["QuestionListTitle"]</h3>
     <QuestionList Questions="@_questions"></QuestionList>
 }
 
@@ -45,25 +47,44 @@
     private List<Question>? _questions;
     private MudForm _form = default!;
     private readonly CreateQuestionValidator _validator = new();
-    
-    
+
+
     protected override async Task OnInitializedAsync()
     {
         var jwt = await CheckJwt();
         _questions = await HttpUtils.Get<List<Question>>("question", jwtToken: jwt);
     }
 
-    private async void OnValidSubmit(EditContext context)
+    private async void OnValidSubmit()
     {
+        
+        await _form.Validate();
+        if (!_form.IsValid)
+        {
+            Console.WriteLine("Form is not valid");
+            return;
+        }
+        
         var jwt = await CheckJwt();
-        Console.WriteLine("Submitting question");
         var question = await HttpUtils.Post<CreateQuestion>("question", _model, jwtToken: jwt);
         _questions = await HttpUtils.Get<List<Question>>("question", jwtToken: jwt);
-        Console.WriteLine(question);
+        Console.WriteLine("Question added");
+        
+        _model = new()
+        {
+            Text = "",
+            Answers = new List<CreateAnswer>()
+            {
+                new()
+                {
+                    User = "NOT IMPLEMENTED",
+                }
+            }
+        };
         StateHasChanged();
     }
 
-    private readonly CreateQuestion _model = new()
+    private CreateQuestion _model = new()
     {
         Text = "",
         Answers = new List<CreateAnswer>()
@@ -91,6 +112,14 @@
         await Localstorage.RemoveItemAsync("token");
         Navigation.NavigateTo("/login");
         return "";
+    }
+
+    private void RemoveAnswer()
+    {
+        if (_model.Answers.Count > 1)
+        {
+            _model.Answers.RemoveAt(_model.Answers.Count - 1);
+        }
     }
 
 }
