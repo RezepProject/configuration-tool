@@ -7,17 +7,18 @@
 
 <MudDialog>
     <DialogContent>
-        <MudForm Model="@Question" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0" OnValidSubmit="OnValidSubmit">
+        <MudForm Model="@Question" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0">
             <MudCard>
                 <MudCardContent>
-                    <MudTextField Label=@Localizer["Question"]  @bind-Value="@Question.Text" For="@(() => Question.Text)"/>
+                    <MudTextField Label=@Localizer["Question"]  @bind-Value="@Question.Text" For="@(() => Question.Text)" Immediate="@true"/>
                     @foreach (var answer in Question.Answers)
                     {
-                        <MudTextField Label=@Localizer["Answer"]  @bind-Value="answer.Text" For="@(() => answer.Text)"/>
+                        <MudTextField Label=@Localizer["Answer"]  @bind-Value="answer.Text" For="@(() => answer.Text)" Immediate="@true"/>
                     }
                 </MudCardContent>
                 <MudCardActions>
                     <MudButton Color="Color.Info" OnClick="() => AddAnswer()">Add answer</MudButton>
+                    <MudButton Color="Color.Warning" OnClick="() => RemoveAnswer()">Remove answer</MudButton>
                     <MudButton ButtonType="ButtonType.Reset" Color="Color.Error">Reset</MudButton>
                 </MudCardActions>
             </MudCard>
@@ -46,7 +47,15 @@
 
     async void Submit()
     {
+        await _form.Validate();
+        if (!_form.IsValid)
+        {
+            Console.WriteLine("Form is invalid");
+            return;
+        }
+        
         await UpdateQuestion();
+        StateHasChanged();
         MudDialog.Close(DialogResult.Ok(true));
     }
 
@@ -88,7 +97,13 @@
         }
 
         await HttpUtils.Put<Question>($"question/{Question.Id}", new CreateQuestion(Question), token);
-        Submit();
     }
 
+    private void RemoveAnswer()
+    {
+        if (Question.Answers.Count > 1)
+        {
+            Question.Answers.RemoveAt(Question.Answers.Count - 1);
+        }
+    }
 }
