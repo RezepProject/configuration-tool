@@ -1,0 +1,109 @@
+﻿@using Blazored.LocalStorage
+@using ConfigurationTool.Model
+@using ConfigurationTool.Utils
+@inject IStringLocalizer<ApplicationResource> Localizer
+@inject ILocalStorageService Localstorage
+@inject NavigationManager Navigation
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="@Question" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label=@Localizer["Question"]  @bind-Value="@Question.Text" For="@(() => Question.Text)" Immediate="@true"/>
+                    @foreach (var answer in Question.Answers)
+                    {
+                        <MudTextField Label=@Localizer["Answer"]  @bind-Value="answer.Text" For="@(() => answer.Text)" Immediate="@true"/>
+                    }
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Color="Color.Info" OnClick="() => AddAnswer()">Add answer</MudButton>
+                    <MudButton Color="Color.Warning" OnClick="() => RemoveAnswer()">Remove answer</MudButton>
+                    <MudButton ButtonType="ButtonType.Reset" Color="Color.Error">Reset</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="Delete" Color="Color.Error">Delete</MudButton>
+        <MudButton OnClick="Submit" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save Changes</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public Question Question { get; set; } = new();
+
+    private MudForm _form = default!;
+    private readonly QuestionValidator _validator = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        MudDialog.Options.FullWidth = true;
+    }
+
+
+    async void Submit()
+    {
+        await _form.Validate();
+        if (!_form.IsValid)
+        {
+            Console.WriteLine("Form is invalid");
+            return;
+        }
+        
+        await UpdateQuestion();
+        StateHasChanged();
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    async Task Delete()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+
+
+        if (token == null)
+        {
+            await Localstorage.RemoveItemAsync("token");
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        await HttpUtils.Delete<Question>($"question/{Question.Id}", token);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    private void AddAnswer()
+    {
+        Question.Answers.Add(new Answer()
+        {
+            User = "NOT IMPLEMENTED",
+        });
+    }
+
+    private async Task UpdateQuestion()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+
+        if (token == null)
+        {
+            await Localstorage.RemoveItemAsync("token");
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        await HttpUtils.Put<Question>($"question/{Question.Id}", new CreateQuestion(Question), token);
+    }
+
+    private void RemoveAnswer()
+    {
+        if (Question.Answers.Count > 0)
+        {
+            Question.Answers.RemoveAt(Question.Answers.Count - 1);
+        }
+    }
+}

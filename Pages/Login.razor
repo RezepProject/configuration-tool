@@ -1,7 +1,9 @@
 @page "/login"
+@using System.Data
 @using ConfigurationTool.Model
 @using ConfigurationTool.Utils
 @using Blazored.LocalStorage
+@using FluentValidation
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService Localstorage
 @inject NavigationManager Navigation
@@ -14,7 +16,7 @@
         <AuthorizeView>
             <Authorized>
                 <MudPaper Class="pa-4">
-                    <MudForm @bind-IsValid="@_success" @ref="_form">
+                    <MudForm @ref="_form">
                         <h2>Are you sure you want to log out?</h2>
                         <div style="margin-top: 1em">
                             <MudButton Variant="Variant.Filled" Color="Color.Info" Class="ml-auto" OnClick='() => Navigation.NavigateTo("/")'>Cancel</MudButton>
@@ -24,31 +26,49 @@
                 </MudPaper>
             </Authorized>
             <NotAuthorized>
-               <MudPaper Class="pa-4">
-                   <MudForm @bind-IsValid="@_success" @ref="_form">
-                       <MudTextField T="string" Label="Email" Required="true" @bind-Value="_id" RequiredError=@Localizer["EmailRequired"]/>
-                       <MudTextField @bind-Value="_password" Label=@Localizer["Password"]
-                                     RequiredError=@Localizer["PasswordRequired"] Required="true"
-                                     Variant="Variant.Text" InputType="@_passwordInput"
-                                     Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="EyeBtnClick"
-                                     AdornmentAriaLabel="Show Password" />
+                <MudPaper Class="pa-4">
+                    <MudForm Model="@_model" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0">
+                        <MudTextField T="string" Label="Email" For="@(() => _model.UserIdentificator)" @bind-Value="@_model.UserIdentificator" Immediate="@true"/>
+                        <MudTextField @bind-Value="@_model.Password" Label=@Localizer["Password"]
+                                      Variant="Variant.Text" InputType="@_passwordInput"
+                                      Immediate="@true" For="@(() => _model.Password)"
+                                      Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="EyeBtnClick"
+                                      AdornmentAriaLabel="Show Password"/>
 
-                       <div class="d-flex align-center justify-space-between mt-4">
-                           <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_success)" Class="ml-auto" OnClick="HandleLogin">Login</MudButton>
-                       </div>
-                   </MudForm>
-                   <MudButton Variant="Variant.Text" Color="Color.Secondary" Class="ml-auto" OnClick='() => Navigation.NavigateTo("/forgot-password")'>Forgot Password?</MudButton>
-               </MudPaper>
+                        <div class="d-flex align-center justify-space-between mt-4">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="HandleLogin">Login</MudButton>
+                        </div>
+                    </MudForm>
+                    <MudButton Variant="Variant.Text" Color="Color.Secondary" Class="ml-auto" OnClick='() => Navigation.NavigateTo("/forgot-password")'>Forgot Password?</MudButton>
+                </MudPaper>
             </NotAuthorized>
         </AuthorizeView>
     </MudItem>
 </MudGrid>
 
 @code {
-    bool _success;
     MudForm? _form;
-    string? _password;
-    string? _id;
+    private readonly UserLoginValidator _validator = new();
+    private readonly UserLogin _model = new();
+
+    class UserLogin
+    {
+        public string UserIdentificator { get; set; }
+        public string Password { get; set; }
+    }
+
+    class UserLoginValidator : ValidatorBase<UserLogin>
+    {
+        public UserLoginValidator()
+        {
+            RuleFor(x => x.UserIdentificator)
+                .NotEmpty()
+                .WithMessage("Email is required");
+            RuleFor(x => x.Password)
+                .NotEmpty()
+                .WithMessage("Password is required");
+        }
+    }
 
     bool _isShow;
     InputType _passwordInput = InputType.Password;
@@ -62,7 +82,8 @@
             _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
             _passwordInput = InputType.Password;
         }
-        else {
+        else
+        {
             _isShow = true;
             _passwordInputIcon = Icons.Material.Filled.Visibility;
             _passwordInput = InputType.Text;
@@ -77,24 +98,28 @@
 
     async Task HandleLogin()
     {
-        if(string.IsNullOrWhiteSpace(_id) || string.IsNullOrWhiteSpace(_password))
+        await _form.Validate();
+        if (!_form.IsValid)
         {
-            _success = false;
-            StateHasChanged();
             return;
         }
         
+        if (string.IsNullOrWhiteSpace(_model.UserIdentificator) || string.IsNullOrWhiteSpace(_model.Password))
+        {
+            StateHasChanged();
+            return;
+        }
+
         var user = new UserLoginDto
         {
-            UserIdentificator = _id,
-            Password = _password
+            UserIdentificator = _model.UserIdentificator,
+            Password = _model.Password
         };
 
         var token = await HttpUtils.Post<string>("authentication", user);
 
         if (string.IsNullOrEmpty(token))
         {
-            _success = false;
             StateHasChanged();
             return;
         }
@@ -104,4 +129,5 @@
         await AuthStateProvider.GetAuthenticationStateAsync();
         Navigation.NavigateTo("/");
     }
+
 }

@@ -1,44 +1,125 @@
 ﻿@page "/manage-questions"
+@using System.ComponentModel.DataAnnotations
+@using Blazored.LocalStorage
+@using ConfigurationTool.Utils
+@using ConfigurationTool.Components
 @using ConfigurationTool.Model
 @attribute [Authorize]
-<!-- TODO: Add roles here like this attribute [Authorize(Roles = "Admin")] -->
 @inject IStringLocalizer<ApplicationResource> Localizer
+@inject ILocalStorageService Localstorage
+@inject NavigationManager Navigation
 
 <PageTitle>@Localizer["QuestionsManagement"]</PageTitle>
 <MudText Typo="Typo.h3" GutterBottom="true">@Localizer["QuestionsManagement"]</MudText>
-<!-- // TODO: Continue here 26:30 https://www.youtube.com/watch?v=Yh16E2u2pio -->
-<MudGrid>
-    <MudItem xs="12" sm="7">
-        <MudPaper Class="pa-4">
-            <MudForm @ref="_form" @bind-IsValid="@_success">
-                <MudTextField T="string" Label=@Localizer["Question"] Required="true" @ref="_questionInput"
-                              RequiredError=@Localizer["ErrorTextQuestion"]
-                              Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
 
-                <MudTextField T="string" Label=@Localizer["Answer"] Required="true" @ref="_answerInput"
-                              RequiredError=@Localizer["ErrorTextAnswer"]
-                              Validation="@(new Func<string, IEnumerable<string>>(LengthCheck))"/>
+<MudForm Model="@_model" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0">
+    <MudCard>
+        <MudCardContent>
+            <MudTextField Label=@Localizer["Question"]  @bind-Value="@_model.Text" For="@(() => _model.Text)" Immediate="@true"/>
+            @foreach (var answer in _model.Answers)
+            {
+                <MudTextField Label=@Localizer["Answer"]  @bind-Value="answer.Text" For="@(() => answer.Text)" Immediate="@true"/>
+            }
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Color="Color.Info" OnClick="() => AddAnswer()">Add answer</MudButton>
+            <MudButton Color="Color.Warning" OnClick="() => RemoveAnswer()">Remove answer</MudButton>
+            <MudButton ButtonType="ButtonType.Reset" Color="Color.Error">Reset</MudButton>
+            <MudButton OnClick="() => OnValidSubmit()" Color="Color.Primary" Class="ml-auto">Add Question</MudButton>
+        </MudCardActions>
+    </MudCard>
+</MudForm>
 
-            </MudForm>
-        </MudPaper>
-        <MudPaper Class="pa-4 mt-4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(() => _form.Validate())">@Localizer["Submit"]</MudButton>
-            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(() => _form.Reset())">@Localizer["Reset"]</MudButton>
-        </MudPaper>
-    </MudItem>
-</MudGrid>
+@if (_questions != null && _questions.Any(q => q.Answers.Count == 0))
+{
+    <h3>Nicht beantwortet Fragen</h3>
+    <QuestionList Questions="@_questions.Where(q => q.Answers.Count == 0).ToList()"></QuestionList>
+}
+
+@if (_questions != null)
+{
+    <h3>@Localizer["QuestionListTitle"]</h3>
+    <QuestionList Questions="@_questions"></QuestionList>
+}
 
 
 @code {
-    bool _success;
-    MudTextField<string>? _questionInput;
-    MudTextField<string>? _answerInput;
-    MudForm? _form;
-    List<Question> _questions = new List<Question>();
+    private List<Question>? _questions;
+    private MudForm _form = default!;
+    private readonly CreateQuestionValidator _validator = new();
 
-    private IEnumerable<string> LengthCheck(string input)
+
+    protected override async Task OnInitializedAsync()
     {
-        if (input.Length < 10 || string.IsNullOrWhiteSpace(input))
-            yield return Localizer["ErrorTextInputQuestionManagment"];
+        var jwt = await CheckJwt();
+        _questions = await HttpUtils.Get<List<Question>>("question", jwtToken: jwt);
     }
+
+    private async void OnValidSubmit()
+    {
+        
+        await _form.Validate();
+        if (!_form.IsValid)
+        {
+            Console.WriteLine("Form is not valid");
+            return;
+        }
+        
+        var jwt = await CheckJwt();
+        var question = await HttpUtils.Post<CreateQuestion>("question", _model, jwtToken: jwt);
+        _questions = await HttpUtils.Get<List<Question>>("question", jwtToken: jwt);
+        Console.WriteLine("Question added");
+        
+        _model = new()
+        {
+            Text = "",
+            Answers = new List<CreateAnswer>()
+            {
+                new()
+                {
+                    User = "NOT IMPLEMENTED",
+                }
+            }
+        };
+        StateHasChanged();
+    }
+
+    private CreateQuestion _model = new()
+    {
+        Text = "",
+        Answers = new List<CreateAnswer>()
+        {
+            new()
+            {
+                User = "NOT IMPLEMENTED",
+            }
+        }
+    };
+
+    private void AddAnswer()
+    {
+        _model.Answers.Add(new CreateAnswer()
+        {
+            User = "NOT IMPLEMENTED",
+        });
+    }
+
+    private async Task<string> CheckJwt()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+        if (token != null) return token;
+
+        await Localstorage.RemoveItemAsync("token");
+        Navigation.NavigateTo("/login");
+        return "";
+    }
+
+    private void RemoveAnswer()
+    {
+        if (_model.Answers.Count > 0)
+        {
+            _model.Answers.RemoveAt(_model.Answers.Count - 1);
+        }
+    }
+
 }

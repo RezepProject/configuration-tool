@@ -1,0 +1,20 @@
+﻿@using ConfigurationTool.Model
+@inject IStringLocalizer<ApplicationResource> Localizer
+
+<MudTextField Immediate="true" Label=@Localizer["QuestionScreenBar"] @bind-Value="_searchText" Variant="Variant.Text"></MudTextField>
+
+@foreach(var question in Questions.Where(q =>
+             {
+                 return q.Text.Contains(_searchText)
+                        || (q.Answers.Any(a => a.Text != null && a.Text.Contains(_searchText)));
+             }))
+{
+    <QuestionItem Question="@question"/>
+}
+
+
+@code {
+    [Parameter] public List<Question> Questions { get; set; } = new();
+
+    private string _searchText = "";
+}
