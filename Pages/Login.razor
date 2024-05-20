@@ -1,8 +1,7 @@
 @page "/login"
-@using System.Data
+@using Blazored.LocalStorage
 @using ConfigurationTool.Model
 @using ConfigurationTool.Utils
-@using Blazored.LocalStorage
 @using FluentValidation
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService Localstorage
@@ -28,7 +27,7 @@
             <NotAuthorized>
                 <MudPaper Class="pa-4">
                     <MudForm Model="@_model" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0">
-                        <MudTextField T="string" Label="Email" For="@(() => _model.UserIdentificator)" @bind-Value="@_model.UserIdentificator" Immediate="@true"/>
+                        <MudTextField T="string" Label="Email" For="@(() => _model.UserIdentification)" @bind-Value="@_model.UserIdentification" Immediate="@true"/>
                         <MudTextField @bind-Value="@_model.Password" Label=@Localizer["Password"]
                                       Variant="Variant.Text" InputType="@_passwordInput"
                                       Immediate="@true" For="@(() => _model.Password)"
@@ -48,27 +47,8 @@
 
 @code {
     MudForm? _form;
-    private readonly UserLoginValidator _validator = new();
-    private readonly UserLogin _model = new();
-
-    class UserLogin
-    {
-        public string UserIdentificator { get; set; }
-        public string Password { get; set; }
-    }
-
-    class UserLoginValidator : ValidatorBase<UserLogin>
-    {
-        public UserLoginValidator()
-        {
-            RuleFor(x => x.UserIdentificator)
-                .NotEmpty()
-                .WithMessage("Email is required");
-            RuleFor(x => x.Password)
-                .NotEmpty()
-                .WithMessage("Password is required");
-        }
-    }
+    private readonly LoginModelValidator _validator = new();
+    private readonly LoginModel _model = new();
 
     bool _isShow;
     InputType _passwordInput = InputType.Password;
@@ -103,20 +83,8 @@
         {
             return;
         }
-        
-        if (string.IsNullOrWhiteSpace(_model.UserIdentificator) || string.IsNullOrWhiteSpace(_model.Password))
-        {
-            StateHasChanged();
-            return;
-        }
 
-        var user = new UserLoginDto
-        {
-            UserIdentificator = _model.UserIdentificator,
-            Password = _model.Password
-        };
-
-        var token = await HttpUtils.Post<string>("authentication", user);
+        var token = await HttpUtils.Post<string>("authentication", _model);
 
         if (string.IsNullOrEmpty(token))
         {
@@ -125,7 +93,6 @@
         }
 
         await Localstorage.SetItemAsync("token", token);
-        await Localstorage.SetItemAsync("email", user.UserIdentificator);
         await AuthStateProvider.GetAuthenticationStateAsync();
         Navigation.NavigateTo("/");
     }
