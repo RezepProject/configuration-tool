@@ -1,0 +1,58 @@
+﻿@page "/frontend-settings"
+@using Blazored.LocalStorage
+@using ConfigurationTool.Model
+@using ConfigurationTool.Utils
+@inject IStringLocalizer<ApplicationResource> Localizer
+@inject ILocalStorageService Localstorage
+@inject NavigationManager Navigation
+
+<PageTitle>Index</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Frontend Settings</MudText>
+
+
+<MudSelect Label=@Localizer["SelectLanguage"] @bind-Value="_setting.Language" Variant="Variant.Outlined" T="string">
+    <MudSelectItem Value=@_de>
+        <img src="https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg" height="14" class="mr-1" alt="Flag of Germany"/> Deutsch
+    </MudSelectItem>
+    <MudSelectItem Value=@_en>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Flag_of_the_United_Kingdom_%281-2%29.svg" height="14" class="mr-1" alt="Flag of the United Kingdom"/> English
+    </MudSelectItem>
+</MudSelect>
+
+<MudTextField Label="Greeting Message" @bind-Value="_setting.GreetingMessage" Variant="Variant.Outlined" />
+
+<MudText Typo="Typo.h6">Tasking Speed</MudText>
+<MudSlider @bind-Value="_setting.TalkingSpeed" Min="0.5" Max="2" Step="0.1" Color="Color.Primary" />
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="FinishFunction">Finish</MudButton>
+@code
+{
+    readonly string _en = "en-US";
+    readonly string _de = "de";
+    
+    private Setting _setting = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var jwt = await CheckJwt();
+        var settings = await HttpUtils.Get<List<Setting>>("settings", jwtToken: jwt);
+        _setting = settings.FirstOrDefault();
+    }
+    
+    private async Task FinishFunction()
+    {
+        var jwt = await CheckJwt();
+        await HttpUtils.Put<CreateQuestion>($"settings/{_setting.Id}", _setting , jwtToken: jwt);
+    }
+    private async Task<string> CheckJwt()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+        if (token != null) return token;
+
+        await Localstorage.RemoveItemAsync("token");
+        Navigation.NavigateTo("/login");
+        return "";
+    }
+    
+}

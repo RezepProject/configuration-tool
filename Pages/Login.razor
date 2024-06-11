@@ -1,7 +1,8 @@
 @page "/login"
-@using Blazored.LocalStorage
+@using System.Data
 @using ConfigurationTool.Model
 @using ConfigurationTool.Utils
+@using Blazored.LocalStorage
 @using FluentValidation
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService Localstorage
@@ -26,11 +27,9 @@
             </Authorized>
             <NotAuthorized>
                 <MudPaper Class="pa-4">
-                    <MudForm Model="@_model" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0">
-                        <MudTextField T="string" Label="Email" For="@(() => _model.UserIdentification)" @bind-Value="@_model.UserIdentification" Immediate="@true"/>
+                    <MudForm Model="@_model" @ref="@_form">
+                        <MudTextField T="string" Label="Email" For="@(() => _model.UserIdentificator)" @bind-Value="@_model.UserIdentificator"/>
                         <MudTextField @bind-Value="@_model.Password" Label=@Localizer["Password"]
-                                      Variant="Variant.Text" InputType="@_passwordInput"
-                                      Immediate="@true" For="@(() => _model.Password)"
                                       Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="EyeBtnClick"
                                       AdornmentAriaLabel="Show Password"/>
 
@@ -47,9 +46,13 @@
 
 @code {
     MudForm? _form;
-    private readonly LoginModelValidator _validator = new();
-    private readonly LoginModel _model = new();
+    private readonly UserLogin _model = new();
 
+    class UserLogin
+    {
+        public string UserIdentificator { get; set; }
+        public string Password { get; set; }
+    }
     bool _isShow;
     InputType _passwordInput = InputType.Password;
     string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
