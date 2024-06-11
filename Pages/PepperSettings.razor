@@ -1,6 +1,141 @@
 ﻿@page "/pepper-settings"
+@using Blazored.LocalStorage
+@using ConfigurationTool.Model
+@using ConfigurationTool.Utils
 @inject IStringLocalizer<ApplicationResource> Localizer
+@inject ILocalStorageService Localstorage
+@inject NavigationManager NavigationManager
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Pepper Settings</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">@Localizer["NotImplemented"]</MudText>
+@code{
+    List<Assistant> _robots = new List<Assistant>();
+    string _toggleText = "Shrink";
+    string _fileUploadInput = "";
+    private bool IsLoading { get; set; } = true;
+
+    protected override async void OnInitialized()
+    {
+        List<Assistant> assList = await HttpUtils.Get<List<Assistant>>("settings", await CheckJwt());
+        foreach (Assistant a in assList)
+        {
+            a.IsExpanded = true;
+            _robots.Add(a);
+            Console.WriteLine($"Assistant: {a.Name} added to list.");
+        }
+
+        IsLoading = false;
+        Console.WriteLine("done");
+        StateHasChanged(); 
+    }
+
+    async Task<string> CheckJwt()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+        if (token != null) return token;
+
+        await Localstorage.RemoveItemAsync("token");
+        NavigationManager.NavigateTo("/login");
+        return "";
+    }
+
+    private async void AddRobot()
+    {
+        Assistant newAssistant = new Assistant()
+        {
+            BackgroundImage = "",
+            Name = "new Assistant",
+            Language = "German",
+            TalkingSpeed = 1,
+            GreetingMessage = "Hello, I am a new Assistant.",
+            State = true,
+            IsExpanded = true,
+        };
+        var res = await HttpUtils.Post<Assistant>("settings", newAssistant, await CheckJwt());
+        
+        if (res == null)
+            return;
+        
+        _robots.Add(newAssistant);
+        StateHasChanged();
+    }
+
+    private void ToggleExpansion(Assistant assistant)
+    {
+        assistant.IsExpanded = !assistant.IsExpanded;
+
+        if (_toggleText == "Shrink")
+        {
+            _toggleText = "Expand";
+        }
+        else
+        {
+            _toggleText = "Shrink";
+        }
+    }
+
+    private async void SaveChangesToAssistant(Assistant updatedAssistant)
+    {
+        await HttpUtils.Put<Assistant>($"settings/{updatedAssistant.Id}", updatedAssistant, await CheckJwt());
+    }
+
+    private string SetLanguage(string language, Assistant robot)
+    {
+        robot.Language = language;
+        return language;
+    }
+
+}
+
+<h1>Assistant Settings: </h1>
+@if (IsLoading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    @foreach (var robot in _robots)
+    {
+        <MudCard Class="mb-4">
+            <MudCardContent>
+                <h3>Assistant: @robot.Name</h3>
+                @if (robot.IsExpanded)
+                {
+                    <MudTextField Label="Name" @bind-Value="@robot.Name"/>
+                    <MudSelect T="string" Label="Language" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem Value="@(SetLanguage("English", robot))"/>
+                        <MudSelectItem Value="@(SetLanguage("German", robot))"/>
+                    </MudSelect>
+                    <p style="margin-top: 25px">Talking Speed: @robot.TalkingSpeed</p>
+                    <MudSlider Label="Talking Speed" @bind-Value="@robot.TalkingSpeed" Min="0.5" Max="2" Step="0.25"/>
+                    <MudTextField Label="Greeting Message" @bind-Value="@robot.GreetingMessage"/>
+
+                    <MudCardActions Style="display: flex; justify-content: space-between;">
+                    <div style="margin-top: 20px">
+                        <MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles" MaximumFileCount="100">
+                            <ButtonTemplate>
+                                <label for="fileUploadInput" onclick="document.getElementById('fileUploadInput').click()">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload">
+                                        Upload Backgound Image
+                                    </MudButton>
+                                </label>
+                            </ButtonTemplate>
+                        </MudFileUpload>
+                        <input id="fileUploadInput" type="file" style="display:none;"/>
+                    </div>
+                    <MudButton Variant="Variant.Filled" Color="robot.State ? Color.Success : Color.Secondary" @onclick="() => robot.State = !robot.State">@(robot.State ? "ENABLED" : "DISABLED")</MudButton>
+                    </MudCardActions>
+                }
+                @if (_fileUploadInput != "")
+                {
+                    <p>works</p>
+                }
+                <MudCardActions Style="display: flex; justify-content: space-between;">
+                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="() => ToggleExpansion(robot)">@_toggleText</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" @onclick="() => SaveChangesToAssistant(robot)">Save Changes</MudButton>
+                </MudCardActions>
+            </MudCardContent >
+        </MudCard>
+    }
+    <MudButton Variant="Variant.Filled" @onclick="AddRobot" Color="Color.Success">Add Assistant</MudButton>
+}
