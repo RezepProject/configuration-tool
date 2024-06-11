@@ -28,7 +28,7 @@
             <NotAuthorized>
                 <MudPaper Class="pa-4">
                     <MudForm Model="@_model" @ref="@_form">
-                        <MudTextField T="string" Label="Email" For="@(() => _model.UserIdentificator)" @bind-Value="@_model.UserIdentificator" Immediate="@true"/>
+                        <MudTextField T="string" Label="Email" For="@(() => _model.UserIdentificator)" @bind-Value="@_model.UserIdentificator"/>
                         <MudTextField @bind-Value="@_model.Password" Label=@Localizer["Password"]
                                       Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="EyeBtnClick"
                                       AdornmentAriaLabel="Show Password"/>
@@ -86,20 +86,8 @@
         {
             return;
         }
-        
-        if (string.IsNullOrWhiteSpace(_model.UserIdentificator) || string.IsNullOrWhiteSpace(_model.Password))
-        {
-            StateHasChanged();
-            return;
-        }
 
-        var user = new UserLoginDto
-        {
-            UserIdentificator = _model.UserIdentificator,
-            Password = _model.Password
-        };
-
-        var token = await HttpUtils.Post<string>("authentication", user);
+        var token = await HttpUtils.Post<string>("authentication", _model);
 
         if (string.IsNullOrEmpty(token))
         {
@@ -108,7 +96,6 @@
         }
 
         await Localstorage.SetItemAsync("token", token);
-        await Localstorage.SetItemAsync("email", user.UserIdentificator);
         await AuthStateProvider.GetAuthenticationStateAsync();
         Navigation.NavigateTo("/");
     }
