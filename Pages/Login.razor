@@ -27,11 +27,9 @@
             </Authorized>
             <NotAuthorized>
                 <MudPaper Class="pa-4">
-                    <MudForm Model="@_model" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0">
+                    <MudForm Model="@_model" @ref="@_form">
                         <MudTextField T="string" Label="Email" For="@(() => _model.UserIdentificator)" @bind-Value="@_model.UserIdentificator" Immediate="@true"/>
                         <MudTextField @bind-Value="@_model.Password" Label=@Localizer["Password"]
-                                      Variant="Variant.Text" InputType="@_passwordInput"
-                                      Immediate="@true" For="@(() => _model.Password)"
                                       Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="EyeBtnClick"
                                       AdornmentAriaLabel="Show Password"/>
 
@@ -48,7 +46,6 @@
 
 @code {
     MudForm? _form;
-    private readonly UserLoginValidator _validator = new();
     private readonly UserLogin _model = new();
 
     class UserLogin
@@ -56,20 +53,6 @@
         public string UserIdentificator { get; set; }
         public string Password { get; set; }
     }
-
-    class UserLoginValidator : ValidatorBase<UserLogin>
-    {
-        public UserLoginValidator()
-        {
-            RuleFor(x => x.UserIdentificator)
-                .NotEmpty()
-                .WithMessage("Email is required");
-            RuleFor(x => x.Password)
-                .NotEmpty()
-                .WithMessage("Password is required");
-        }
-    }
-
     bool _isShow;
     InputType _passwordInput = InputType.Password;
     string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
