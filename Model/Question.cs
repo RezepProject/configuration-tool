@@ -46,9 +46,7 @@ public class CreateQuestionValidator : ValidatorBase<CreateQuestion>
             .NotNull()
             .NotEmpty();
         RuleFor(q => q.Answers)
-            .NotNull()
-            .SetValidator(new CreateAnswerListValidator())
-            .NotEmpty();
+            .SetValidator(new CreateAnswerListValidator());
     }
 }
 

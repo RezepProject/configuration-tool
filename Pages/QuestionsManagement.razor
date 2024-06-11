@@ -30,12 +30,6 @@
     </MudCard>
 </MudForm>
 
-@if (_questions != null && _questions.Any(q => q.Answers.Count == 0))
-{
-    <h3>Nicht beantwortet Fragen</h3>
-    <QuestionList Questions="@_questions.Where(q => q.Answers.Count == 0).ToList()"></QuestionList>
-}
-
 @if (_questions != null)
 {
     <h3>@Localizer["QuestionListTitle"]</h3>
