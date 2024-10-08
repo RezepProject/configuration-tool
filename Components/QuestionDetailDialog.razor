@@ -63,7 +63,6 @@
     {
         var token = await Localstorage.GetItemAsync<string>("token");
 
-
         if (token == null)
         {
             await Localstorage.RemoveItemAsync("token");
@@ -72,7 +71,8 @@
         }
 
         await HttpUtils.Delete<Question>($"question/{Question.Id}", token);
-        MudDialog.Close(DialogResult.Ok(true));
+        
+        MudDialog.Close(DialogResult.Ok($"Question is deleted"));
     }
 
     void Cancel() => MudDialog.Cancel();
