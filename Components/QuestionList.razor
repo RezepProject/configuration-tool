@@ -9,12 +9,13 @@
                         || (q.Answers.Any(a => a.Text != null && a.Text.Contains(_searchText)));
              }))
 {
-    <QuestionItem Question="@question"/>
+    <QuestionItem Question="@question" Categories="Categories"/>
 }
 
 
 @code {
     [Parameter] public List<Question> Questions { get; set; } = new();
+    [Parameter] public List<QuestionCategory> Categories { get; set; } = new();
 
     private string _searchText = "";
 }

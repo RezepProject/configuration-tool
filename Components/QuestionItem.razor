@@ -22,11 +22,12 @@
 
 @code {
     [Parameter] public Question Question { get; set; } = new();
+    [Parameter] public List<QuestionCategory> Categories { get; set; } = new();
     private bool _isDeleted = false;
     
     private async Task OpenDialog()
     {
-        var parameters = new DialogParameters { ["Question"] = Question };
+        var parameters = new DialogParameters { ["Question"] = Question, ["Categories"] = Categories };
 
         var dialog = DialogService.Show<QuestionDetailDialog>(Question.Text, parameters);
         

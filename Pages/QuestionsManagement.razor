@@ -33,12 +33,13 @@
 @if (_questions != null)
 {
     <h3>@Localizer["QuestionListTitle"]</h3>
-    <QuestionList Questions="@_questions"></QuestionList>
+    <QuestionList Questions="@_questions" Categories="_categories"></QuestionList>
 }
 
 
 @code {
     private List<Question>? _questions;
+    private List<QuestionCategory>? _categories;
     private MudForm _form = default!;
     private readonly CreateQuestionValidator _validator = new();
 
@@ -47,6 +48,7 @@
     {
         var jwt = await CheckJwt();
         _questions = await HttpUtils.Get<List<Question>>("question", jwtToken: jwt);
+        _categories = await HttpUtils.Get<List<QuestionCategory>>("question/categories", jwtToken: jwt);
     }
 
     private async void OnValidSubmit()
@@ -62,6 +64,7 @@
         var jwt = await CheckJwt();
         var question = await HttpUtils.Post<CreateQuestion>("question", _model, jwtToken: jwt);
         _questions = await HttpUtils.Get<List<Question>>("question", jwtToken: jwt);
+        _categories = await HttpUtils.Get<List<QuestionCategory>>("question/categories", jwtToken: jwt);
         Console.WriteLine("Question added");
         
         _model = new()
