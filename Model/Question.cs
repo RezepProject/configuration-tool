@@ -17,6 +17,7 @@ public class CreateQuestion
 {
     public string Text { get; set; } = String.Empty;
     public List<CreateAnswer> Answers { get; set; } = new();
+    public List<CreateQuestionCategory> Categories { get; set; } = new();
     
     public CreateQuestion()
     {
@@ -25,6 +26,7 @@ public class CreateQuestion
     {
         Text = question.Text;
         Answers = question.Answers.Select(a => new CreateAnswer(a)).ToList();
+        Categories = question.Categories.Select(c => new CreateQuestionCategory(c)).ToList();
     }
 }
 

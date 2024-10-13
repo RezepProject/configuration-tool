@@ -15,16 +15,31 @@
 <MudForm Model="@_model" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0">
     <MudCard>
         <MudCardContent>
-            <MudTextField Label=@Localizer["Question"]  @bind-Value="@_model.Text" For="@(() => _model.Text)" Immediate="@true"/>
+            <MudChipSet T="string" AllClosable OnClose="RemoveCategory">
+                @foreach (var category in _model.Categories)
+                {
+                    <MudChip Text="@category.Name"></MudChip>
+                }
+            </MudChipSet>
+            <MudTextField Label=@Localizer["Question"]   @bind-Value="@_model.Text" For="@(() => _model.Text)" Immediate="@true"/>
             @foreach (var answer in _model.Answers)
             {
-                <MudTextField Label=@Localizer["Answer"]  @bind-Value="answer.Text" For="@(() => answer.Text)" Immediate="@true"/>
+                <MudTextField Label=@Localizer["Answer"]   @bind-Value="answer.Text" For="@(() => answer.Text)" Immediate="@true"/>
+            }
+            @if(_categories is { Count: > 0 })
+            {
+                <MudSelect T="string" Label="Neue Kategorie" Disabled="_model.Categories.Count == 3" @bind-Value="_selectedCategory" For="@(() => _selectedCategory)" Placeholder="Wählen Sie eine neue Kategorie aus">
+                    @foreach(var category in _categories)
+                    {
+                        <MudSelectItem Value="@category.Name">@category.Name</MudSelectItem>
+                    }
+                </MudSelect>
             }
         </MudCardContent>
         <MudCardActions>
             <MudButton Color="Color.Info" OnClick="() => AddAnswer()">Add answer</MudButton>
             <MudButton Color="Color.Warning" OnClick="() => RemoveAnswer()">Remove answer</MudButton>
-            <MudButton ButtonType="ButtonType.Reset" Color="Color.Error">Reset</MudButton>
+            <MudButton Color="Color.Success" OnClick="() => AddCategory()" Disabled="string.IsNullOrEmpty(_selectedCategory)">Add category</MudButton>
             <MudButton OnClick="() => OnValidSubmit()" Color="Color.Primary" Class="ml-auto">Add Question</MudButton>
         </MudCardActions>
     </MudCard>
@@ -42,44 +57,7 @@
     private List<QuestionCategory>? _categories;
     private MudForm _form = default!;
     private readonly CreateQuestionValidator _validator = new();
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        var jwt = await CheckJwt();
-        _questions = await HttpUtils.Get<List<Question>>("question", jwtToken: jwt);
-        _categories = await HttpUtils.Get<List<QuestionCategory>>("question/categories", jwtToken: jwt);
-    }
-
-    private async void OnValidSubmit()
-    {
-        
-        await _form.Validate();
-        if (!_form.IsValid)
-        {
-            Console.WriteLine("Form is not valid");
-            return;
-        }
-        
-        var jwt = await CheckJwt();
-        var question = await HttpUtils.Post<CreateQuestion>("question", _model, jwtToken: jwt);
-        _questions = await HttpUtils.Get<List<Question>>("question", jwtToken: jwt);
-        _categories = await HttpUtils.Get<List<QuestionCategory>>("question/categories", jwtToken: jwt);
-        Console.WriteLine("Question added");
-        
-        _model = new()
-        {
-            Text = "",
-            Answers = new List<CreateAnswer>()
-            {
-                new()
-                {
-                    User = "NOT IMPLEMENTED",
-                }
-            }
-        };
-        StateHasChanged();
-    }
+    private string _selectedCategory;
 
     private CreateQuestion _model = new()
     {
@@ -90,8 +68,46 @@
             {
                 User = "NOT IMPLEMENTED",
             }
-        }
+        },
+        Categories = new List<CreateQuestionCategory>()
     };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var jwt = await CheckJwt();
+        _questions = await HttpUtils.Get<List<Question>>("question", jwtToken: jwt);
+        _categories = await HttpUtils.Get<List<QuestionCategory>>("question/categories", jwtToken: jwt);
+    }
+
+    private async void OnValidSubmit()
+    {
+        await _form.Validate();
+        if (!_form.IsValid)
+        {
+            Console.WriteLine("Form is not valid");
+            return;
+        }
+
+        var jwt = await CheckJwt();
+        var question = await HttpUtils.Post<CreateQuestion>("question", _model, jwtToken: jwt);
+        _questions = await HttpUtils.Get<List<Question>>("question", jwtToken: jwt);
+        _categories = await HttpUtils.Get<List<QuestionCategory>>("question/categories", jwtToken: jwt);
+        Console.WriteLine("Question added");
+
+        _model = new()
+        {
+            Text = "",
+            Answers = new List<CreateAnswer>()
+            {
+                new()
+                {
+                    User = "NOT IMPLEMENTED",
+                }
+            },
+            Categories = new List<CreateQuestionCategory>()
+        };
+        StateHasChanged();
+    }
 
     private void AddAnswer()
     {
@@ -119,4 +135,20 @@
         }
     }
 
+    private void RemoveCategory(MudChip chip)
+    {
+        var item = _model.Categories.Single(c => c.Name == chip.Text);
+        _model.Categories.Remove(item);
+    }
+
+    private void AddCategory()
+    {
+        if (_categories != null)
+        {
+            var category = _categories.First(c => c.Name == _selectedCategory);
+            _model.Categories.Add(new CreateQuestionCategory(category));
+        }
+
+        _selectedCategory = null;
+    }
 }

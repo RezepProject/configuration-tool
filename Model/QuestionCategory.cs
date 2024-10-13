@@ -10,4 +10,9 @@ public class QuestionCategory
 public class CreateQuestionCategory
 {
     public string Name { get; set; }
+    
+    public CreateQuestionCategory(QuestionCategory category)
+    {
+        Name = category.Name;
+    }
 }
