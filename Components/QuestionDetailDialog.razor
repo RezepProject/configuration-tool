@@ -5,21 +5,33 @@
 @inject ILocalStorageService Localstorage
 @inject NavigationManager Navigation
 
-<MudDialog>
+<MudDialog Style="width: 600px">
     <DialogContent>
         <MudForm Model="@Question" @ref="@_form" Validation="@_validator.ValidateValue" ValidationDelay="0">
             <MudCard>
                 <MudCardContent>
-                    <MudTextField Label=@Localizer["Question"]  @bind-Value="@Question.Text" For="@(() => Question.Text)" Immediate="@true"/>
+                    <MudChipSet T="string" AllClosable OnClose="RemoveCategory">
+                        @foreach (var category in Question.Categories)
+                        {
+                            <MudChip Text="@category.Name"></MudChip>
+                        }
+                    </MudChipSet>
+                    <MudTextField Label=@Localizer["Question"] @bind-Value="@Question.Text" For="@(() => Question.Text)" Immediate="@true"/>
                     @foreach (var answer in Question.Answers)
                     {
-                        <MudTextField Label=@Localizer["Answer"]  @bind-Value="answer.Text" For="@(() => answer.Text)" Immediate="@true"/>
+                        <MudTextField Label=@Localizer["Answer"] @bind-Value="answer.Text" For="@(() => answer.Text)" Immediate="@true"/>
                     }
+                    <MudSelect T="string" Label="Neue Kategorie" Disabled="Question.Categories.Count == 3" @bind-Value="_selectedCategory" For="@(() => _selectedCategory)" Placeholder="Wählen Sie eine neue Kategorie aus">
+                        @foreach(var category in Categories)
+                        {
+                        <MudSelectItem Value="@category.Name">@category.Name</MudSelectItem>
+                        }
+                    </MudSelect>
                 </MudCardContent>
                 <MudCardActions>
                     <MudButton Color="Color.Info" OnClick="() => AddAnswer()">Add answer</MudButton>
                     <MudButton Color="Color.Warning" OnClick="() => RemoveAnswer()">Remove answer</MudButton>
-                    <MudButton ButtonType="ButtonType.Reset" Color="Color.Error">Reset</MudButton>
+                    <MudButton Color="Color.Success" OnClick="() => AddCategory()" Disabled="string.IsNullOrEmpty(_selectedCategory)">Add category</MudButton>
                 </MudCardActions>
             </MudCard>
         </MudForm>
@@ -35,9 +47,11 @@
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter] public Question Question { get; set; } = new();
+    [Parameter] public List<QuestionCategory> Categories { get; set; } = new();
 
     private MudForm _form = default!;
     private readonly QuestionValidator _validator = new();
+    private string _selectedCategory;
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,7 +77,6 @@
     {
         var token = await Localstorage.GetItemAsync<string>("token");
 
-
         if (token == null)
         {
             await Localstorage.RemoveItemAsync("token");
@@ -72,7 +85,8 @@
         }
 
         await HttpUtils.Delete<Question>($"question/{Question.Id}", token);
-        MudDialog.Close(DialogResult.Ok(true));
+        
+        MudDialog.Close(DialogResult.Ok($"Question is deleted"));
     }
 
     void Cancel() => MudDialog.Cancel();
@@ -105,5 +119,17 @@
         {
             Question.Answers.RemoveAt(Question.Answers.Count - 1);
         }
+    }
+    
+    private void RemoveCategory(MudChip chip)
+    {
+        var item = Question.Categories.Single(c => c.Name == chip.Text);
+        Question.Categories.Remove(item);
+    }
+    
+    private void AddCategory()
+    {
+        Question.Categories.Add(Categories.First(c => c.Name == _selectedCategory));
+        _selectedCategory = null;
     }
 }

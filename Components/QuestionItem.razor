@@ -5,29 +5,42 @@
 @inject ILocalStorageService Localstorage
 @inject NavigationManager Navigation
 
-<MudPaper Style="margin-top: 2em; padding: 5px">
-    <MudText>Question: @Question.Text</MudText>
-    @foreach (var answer in Question.Answers)
-    {
-        <MudText>Answer: @answer.Text</MudText>
-    }
-    <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
-        See Details
-    </MudButton>
-</MudPaper>
+@if (!_isDeleted)
+{
+    <MudPaper Style="margin-top: 2em; padding: 5px">
+        <MudText>Question: @Question.Text</MudText>
+        @foreach (var answer in Question.Answers)
+        {
+            <MudText>Answer: @answer.Text</MudText>
+        }
+        <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+            See Details
+        </MudButton>
+    </MudPaper>
+}
 
 
 @code {
     [Parameter] public Question Question { get; set; } = new();
+    [Parameter] public List<QuestionCategory> Categories { get; set; } = new();
+    private bool _isDeleted = false;
     
     private async Task OpenDialog()
     {
-        var parameters = new DialogParameters { ["Question"] = Question };
+        var parameters = new DialogParameters { ["Question"] = Question, ["Categories"] = Categories };
 
         var dialog = DialogService.Show<QuestionDetailDialog>(Question.Text, parameters);
         
-        if (!(await dialog.Result).Cancelled)
+        var result = await dialog.Result;
+        if (!result.Cancelled)
         {
+            if(result.Data is string data)
+            {
+                if (data == "Question is deleted")
+                {
+                    _isDeleted = true;
+                }
+            }
             var token = await Localstorage.GetItemAsync<string>("token");
 
             if (token == null)

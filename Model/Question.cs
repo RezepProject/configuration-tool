@@ -8,6 +8,7 @@ public class Question
 {
     public int Id { get; set; }
     public string Text { get; set; } = String.Empty;
+    public List<QuestionCategory> Categories { get; set; }
 
     public List<Answer> Answers { get; set; } = new();
 }
@@ -16,6 +17,7 @@ public class CreateQuestion
 {
     public string Text { get; set; } = String.Empty;
     public List<CreateAnswer> Answers { get; set; } = new();
+    public List<CreateQuestionCategory> Categories { get; set; } = new();
     
     public CreateQuestion()
     {
@@ -24,6 +26,7 @@ public class CreateQuestion
     {
         Text = question.Text;
         Answers = question.Answers.Select(a => new CreateAnswer(a)).ToList();
+        Categories = question.Categories.Select(c => new CreateQuestionCategory(c)).ToList();
     }
 }
 
@@ -46,9 +49,7 @@ public class CreateQuestionValidator : ValidatorBase<CreateQuestion>
             .NotNull()
             .NotEmpty();
         RuleFor(q => q.Answers)
-            .NotNull()
-            .SetValidator(new CreateAnswerListValidator())
-            .NotEmpty();
+            .SetValidator(new CreateAnswerListValidator());
     }
 }
 
