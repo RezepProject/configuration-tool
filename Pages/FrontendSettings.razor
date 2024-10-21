@@ -30,7 +30,18 @@
     <MudSelectItem Value="@_mistral">Mistral</MudSelectItem>
 </MudSelect>
 
-<MudImage Src="img/test.jpg" Alt="Mony the dog" Elevation="25" Class="rounded-lg"/>
+<MudGrid Style="margin-top: 10px; margin-bottom: 10px">
+    @foreach (var image in Images)
+    {
+    <MudItem xs="4" sm="3" md="2">
+        <MudCard Class="image-card" Style="@GetImageStyle(image)" @onclick="() => SelectImage(image)">
+            <MudImage Src="@image"
+                      Alt="Image"
+                      Style="aspect-ratio: 1; object-fit: cover; width: 100%; height: auto; border-radius: 12px;" />
+        </MudCard>
+    </MudItem>
+    }
+</MudGrid>
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="FinishFunction">Finish</MudButton>
 @code
@@ -48,6 +59,11 @@
         var jwt = await CheckJwt();
         var settings = await HttpUtils.Get<List<Setting>>("settings", jwtToken: jwt);
         _setting = settings.FirstOrDefault();
+        
+        if (Images.Any())
+        {
+            SelectedImage = Images.First();
+        }
     }
     
     private async Task FinishFunction()
@@ -65,4 +81,36 @@
         return "";
     }
     
+    private List<string> Images = new List<string>
+    {
+        "img/back1.jpg",
+        "img/back2.jpg",
+        "img/back3.jpg",
+        "img/back4.jpg",
+        "img/back5.jpg",
+        "img/back6.jpg",
+    };
+
+    private string SelectedImage;
+
+    private void SelectImage(string image)
+    {
+        SelectedImage = image;
+        //string test = ImageToBase64(image);
+        //_setting.BackgroundImage = test;
+        //Console.WriteLine(test);
+    }
+
+    private string GetImageStyle(string image)
+    {
+        return SelectedImage == image 
+            ? "border: 3px solid #1976D2; border-radius: 12px;"
+            : "border-radius: 12px;";
+    }
+    private string ImageToBase64(string imagePath)
+    {
+        byte[] imageArray = File.ReadAllBytes(imagePath);
+        string base64Image = Convert.ToBase64String(imageArray);
+        return base64Image;
+    }
 }
