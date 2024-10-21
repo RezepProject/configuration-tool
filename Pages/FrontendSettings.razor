@@ -107,10 +107,26 @@
             ? "border: 3px solid #1976D2; border-radius: 12px;"
             : "border-radius: 12px;";
     }
-    private string ImageToBase64(string imagePath)
+    private string ImageToBase64(string relativeImagePath)
     {
-        byte[] imageArray = File.ReadAllBytes(imagePath);
-        string base64Image = Convert.ToBase64String(imageArray);
-        return base64Image;
+        // Get the base path of the application (the folder where the binaries are located)
+        string basePath = AppContext.BaseDirectory;
+
+        // Locate the actual path to wwwroot, ensuring it ends correctly
+        string wwwrootPath = Path.Combine(basePath, "wwwroot");
+
+        // Combine with the relative image path, but ensure the relative path doesn't start with a "/"
+        string absolutePath = Path.Combine(wwwrootPath, relativeImagePath.TrimStart('/'));
+
+        // Check if the file exists at the computed path
+        if (File.Exists(absolutePath))
+        {
+            byte[] imageArray = File.ReadAllBytes(absolutePath);
+            return Convert.ToBase64String(imageArray);
+        }
+        else
+        {
+            throw new FileNotFoundException("Image not found at the specified path.", absolutePath);
+        }
     }
 }
