@@ -11,6 +11,7 @@ public class Setting
     public int ConfigUser { get; set; }
     public string Name { get; set; }
     public string BackgroundImage { get; set; }
+    public int BackgroundImageId { get; set; }
     public string Language { get; set; }
     public double TalkingSpeed { get; set; }
     public string GreetingMessage { get; set; }
