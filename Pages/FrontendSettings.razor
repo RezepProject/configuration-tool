@@ -1,6 +1,9 @@
 ﻿@page "/frontend-settings"
+@using System.Text.RegularExpressions
+@using backend.Entities
 @using Blazored.LocalStorage
 @using ConfigurationTool.Model
+@using ConfigurationTool.Services
 @using ConfigurationTool.Utils
 @inject IStringLocalizer<ApplicationResource> Localizer
 @inject ILocalStorageService Localstorage
@@ -31,11 +34,11 @@
 </MudSelect>
 
 <MudGrid Style="margin-top: 10px; margin-bottom: 10px">
-    @foreach (var image in Images)
+    @foreach (var backImg in _backgroundImages)
     {
     <MudItem xs="4" sm="3" md="2">
-        <MudCard Class="image-card" Style="@GetImageStyle(image)" @onclick="() => SelectImage(image)">
-            <MudImage Src="@image"
+        <MudCard Class="image-card" Style="@GetImageStyle(backImg.Id)" @onclick="() => SelectImage(backImg.Id)">
+            <MudImage Src="@Base64StringBuilder(backImg.Id)"
                       Alt="Image"
                       Style="aspect-ratio: 1; object-fit: cover; width: 100%; height: auto; border-radius: 12px;" />
         </MudCard>
@@ -51,6 +54,8 @@
     
     readonly string _en = "en-US";
     readonly string _de = "de";
+
+    private List<BackgroundImage> _backgroundImages = new();
     
     private Setting _setting = new();
     
@@ -59,10 +64,18 @@
         var jwt = await CheckJwt();
         var settings = await HttpUtils.Get<List<Setting>>("settings", jwtToken: jwt);
         _setting = settings.FirstOrDefault();
+        var backgroundImages = await HttpUtils.Get<List<BackgroundImage>>("backgroundimage", jwtToken: jwt);
         
-        if (Images.Any())
+        if (backgroundImages != null)
         {
-            SelectedImage = Images.First();
+            _backgroundImages = backgroundImages;
+            foreach (var backimg in backgroundImages)
+            {
+                if (_setting.Id == backimg.Id)
+                {
+                    SelectImage(backimg.Id);
+                }
+            }
         }
     }
     
@@ -71,6 +84,20 @@
         var jwt = await CheckJwt();
         await HttpUtils.Put<CreateQuestion>($"settings/{_setting.Id}", _setting , jwtToken: jwt);
     }
+
+    private string Base64StringBuilder(int id)
+    {
+        foreach (var backimg in _backgroundImages)
+        {
+            if (backimg.Id == id)
+            {
+                return $"data:image/png;base64,{backimg.Base64Image}";
+            }
+        }
+        
+        return "";
+    }
+    
     private async Task<string> CheckJwt()
     {
         var token = await Localstorage.GetItemAsync<string>("token");
@@ -80,30 +107,22 @@
         Navigation.NavigateTo("/login");
         return "";
     }
-    
-    private List<string> Images = new List<string>
-    {
-        "img/back1.jpg",
-        "img/back2.jpg",
-        "img/back3.jpg",
-        "img/back4.jpg",
-        "img/back5.jpg",
-        "img/back6.jpg",
-    };
 
-    private string SelectedImage;
-
-    private void SelectImage(string image)
+    private void SelectImage(int imageId)
     {
-        SelectedImage = image;
-        //string test = ImageToBase64(image);
-        //_setting.BackgroundImage = test;
-        //Console.WriteLine(test);
+        foreach (var backimg in _backgroundImages)
+        {
+            if (backimg.Id == imageId)
+            {
+                _setting.BackgroundImageId = imageId;
+                _setting.BackgroundImage = backimg.Base64Image;
+            }
+        }
     }
 
-    private string GetImageStyle(string image)
+    private string GetImageStyle(int imageid)
     {
-        return SelectedImage == image 
+        return imageid == _setting.BackgroundImageId
             ? "border: 3px solid #1976D2; border-radius: 12px;"
             : "border-radius: 12px;";
     }
@@ -111,13 +130,12 @@
     {
         // Get the base path of the application (the folder where the binaries are located)
         string basePath = AppContext.BaseDirectory;
-
         // Locate the actual path to wwwroot, ensuring it ends correctly
         string wwwrootPath = Path.Combine(basePath, "wwwroot");
 
         // Combine with the relative image path, but ensure the relative path doesn't start with a "/"
         string absolutePath = Path.Combine(wwwrootPath, relativeImagePath.TrimStart('/'));
-
+        
         // Check if the file exists at the computed path
         if (File.Exists(absolutePath))
         {
@@ -128,5 +146,23 @@
         {
             throw new FileNotFoundException("Image not found at the specified path.", absolutePath);
         }
+    }
+    
+    private static int ExtractNumbers(string input)
+    {
+        // Regular expression to match digits
+        Regex regex = new Regex(@"[0-9]+");
+
+        // Find all matches in the input string
+        MatchCollection matches = regex.Matches(input);
+
+        // Build a new string with the extracted numbers
+        string result = "";
+        foreach (Match match in matches)
+        {
+            result += match.Value;
+        }
+
+        return Convert.ToInt32(result);
     }
 }
