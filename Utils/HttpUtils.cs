@@ -7,8 +7,8 @@ namespace ConfigurationTool.Utils;
 public class HttpUtils
 {
     //ToDo: Fix before Production?
-    //private const string BASE_URL = "https://if200113.cloud.htl-leonding.ac.at/";
-    private const string BASE_URL = "http://localhost:5260/";
+    private const string BASE_URL = "https://if200113.cloud.htl-leonding.ac.at/";
+    // private const string BASE_URL = "http://localhost:5260/";
 
     public static async Task<T?> Get<T>(string url, string jwtToken = "")
     {
