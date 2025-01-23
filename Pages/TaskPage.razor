@@ -1,0 +1,95 @@
+﻿@page "/tasks"
+@using System.Collections.ObjectModel
+@using backend.Entities
+@using Blazored.LocalStorage
+@using ConfigurationTool.Model
+@using ConfigurationTool.Utils
+@inject HttpClient Http
+@inject ILocalStorageService Localstorage
+@inject NavigationManager Navigation
+
+<PageTitle>Task Management</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Task Management</MudText>
+
+<MudTable Items="@tasks" Elevation="1" Hover="true" Striped="true">
+    <HeaderContent>
+        <MudTh>Text</MudTh>
+        <MudTh>Done</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Text</MudTd>
+        <MudTd>
+            <MudSwitch Checked="context.Done" Color="Color.Success" OnClick="@(() => UpdateTaskDone(context))"/>
+
+        </MudTd>
+        <MudTd>
+            <MudButton Color="Color.Error" OnClick="() => DeleteTask(context)">Delete</MudButton>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="LoadTasks">Reload Tasks</MudButton>
+
+@code {
+    private List<HerbertTask>? tasks = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTasks();
+    }
+
+    private async Task LoadTasks()
+    {
+        var jwt = await CheckJwt();
+        var t = await HttpUtils.Get<List<HerbertTask>>("task", jwtToken: jwt);
+        tasks.Clear();
+        foreach (var task in t)
+        {
+            tasks.Add(task);
+        }
+    }
+
+    private async Task UpdateTaskDone(HerbertTask herbertTask)
+    {
+        herbertTask.Done = !herbertTask.Done;
+        var jwt = await CheckJwt();
+        var response = await HttpUtils.Put<HerbertTask>("task", herbertTask, jwtToken: jwt);
+        if (response != null)
+        {
+            Console.WriteLine("Task updated.");
+        }
+        else
+        {
+            Console.WriteLine("Error updating task.");
+        }
+    }
+
+
+    private async Task DeleteTask(HerbertTask task)
+    {
+        var response = await HttpUtils.Delete<HerbertTask>($"task/{task.Id}", jwtToken: await CheckJwt());
+
+        if (response != null)
+        {
+            if (tasks != null) tasks = tasks.Where(t => t.Id != task.Id).ToList();
+        }
+        else
+        {
+            Console.WriteLine("Error deleting task.");
+        }
+        await LoadTasks();
+    }
+
+    private async Task<string> CheckJwt()
+    {
+        var token = await Localstorage.GetItemAsync<string>("token");
+        if (token != null) return token;
+
+        await Localstorage.RemoveItemAsync("token");
+        Navigation.NavigateTo("/login");
+        return "";
+    }
+
+}
