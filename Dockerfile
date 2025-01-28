@@ -1,4 +1,4 @@
-﻿# Stage 1: Base image with runtime dependencies
+# Stage 1: Base image with runtime dependencies
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
