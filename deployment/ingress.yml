@@ -2,13 +2,13 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: herbert-configtool-ingress
-  namespace: student-if200113
+  namespace: student-if200207
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-    - host: if200113.cloud.htl-leonding.ac.at
+    - host: if200207.cloud.htl-leonding.ac.at
       http:
         paths:
           - path: /configtool
