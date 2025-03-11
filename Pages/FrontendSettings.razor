@@ -5,6 +5,7 @@
 @using ConfigurationTool.Model
 @using ConfigurationTool.Services
 @using ConfigurationTool.Utils
+@using NAudio.Wave
 @inject IStringLocalizer<ApplicationResource> Localizer
 @inject ILocalStorageService Localstorage
 @inject NavigationManager Navigation
@@ -45,7 +46,7 @@
     </MudItem>
     }
 </MudGrid>
-
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="TryTextToSpeech">Try TTS</MudButton>
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="FinishFunction">Finish</MudButton>
 @code
 {
@@ -100,6 +101,26 @@
     {
         var jwt = await CheckJwt();
         await HttpUtils.Put<CreateQuestion>($"settings/{_setting.Id}", _setting , jwtToken: jwt);
+    }
+    private async Task TryTextToSpeech()
+    {
+        Byte[] mp3Data = await UtilTTS.GenerateTTSAsync(_setting.TalkingSpeed, _setting.Language);
+        if (mp3Data == null || mp3Data.Length == 0)
+            throw new ArgumentException("MP3-Daten sind leer.");
+
+        using (var memoryStream = new MemoryStream(mp3Data))
+        using (var mp3Reader = new Mp3FileReader(memoryStream))
+        using (var waveOut = new WaveOutEvent())
+        {
+            waveOut.Init(mp3Reader);
+            waveOut.Play();
+
+            // Warten, bis das Abspielen abgeschlossen ist
+            while (waveOut.PlaybackState == PlaybackState.Playing)
+            {
+                await Task.Delay(100);
+            }
+        }
     }
 
     private string Base64StringBuilder(int id)
